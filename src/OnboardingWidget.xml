@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget
+    xmlns="http://www.mendix.com/widget/1.0/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    id="kobeon.onboardingwidget.OnboardingWidget"
+    pluginWidget="true"
+    needsEntityContext="true"
+    offlineCapable="true"
+    supportedPlatform="Web"
+    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
+>
+    <name>Onboarding Widget</name>
+    <description>Guide users through your app with a step-by-step tour.</description>
+    <icon />
+    <properties>
+        <propertyGroup caption="General">
+            <property key="runTrigger" type="attribute" required="false">
+                <caption>Run trigger</caption>
+                <description>Boolean attribute. When it changes from false to true the tour starts.</description>
+                <attributeTypes>
+                    <attributeType name="Boolean" />
+                </attributeTypes>
+            </property>
+            <property key="showProgress" type="boolean" defaultValue="true">
+                <caption>Show progress</caption>
+                <description>Display the current and total step count (e.g. 2/5).</description>
+            </property>
+            <property key="stylesJson" type="textTemplate" required="false">
+                <caption>Custom styles (JSON)</caption>
+                <description>
+                    Optional JSON for react-joyride styles. Leave empty to use the library defaults. See
+                    https://docs.react-joyride.com/styles for the structure.
+                </description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Text">
+            <property key="BackButtonText" type="string" defaultValue="Back" required="true">
+                <caption>Back button text</caption>
+                <description>Text for the 'Back' button.</description>
+            </property>
+            <property key="NextButtonText" type="string" defaultValue="Next" required="true">
+                <caption>Next button text</caption>
+                <description>Text for the 'Next' button.</description>
+            </property>
+            <property key="FinishButtonText" type="string" defaultValue="Finish" required="true">
+                <caption>Finish button text</caption>
+                <description>Text for the 'Finish' button.</description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Step Data">
+            <property key="steps" type="datasource" isList="true" required="true">
+                <caption>Steps</caption>
+                <description>Datasource returning the tour steps.</description>
+            </property>
+            <property key="stepTarget" type="attribute" dataSource="steps" required="true">
+                <caption>Target selector</caption>
+                <description>CSS selector that identifies the target element.</description>
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="stepOrder" type="attribute" dataSource="steps" required="false">
+                <caption>Sort order (optional)</caption>
+                <description>Sort steps ascending using this attribute.</description>
+                <attributeTypes>
+                    <attributeType name="Decimal" />
+                    <attributeType name="Integer" />
+                    <attributeType name="Long" />
+                    <attributeType name="AutoNumber" />
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Events">
+            <property key="onTourFinish" type="action" required="false">
+                <caption>On tour finish</caption>
+                <description>Executed after the last step completes.</description>
+            </property>
+            <property key="onTourExit" type="action" required="false">
+                <caption>On tour exit</caption>
+                <description>Executed when the user closes or skips the tour before finishing.</description>
+            </property>
+            <property key="stepWidget" type="widgets" dataSource="steps">
+                <caption>step Content</caption>
+                <description>Widgets rendered in the popup for every step.</description>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>

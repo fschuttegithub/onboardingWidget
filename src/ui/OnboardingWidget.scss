@@ -1,0 +1,56 @@
+// Example styling overrides for the Onboarding Widget (react-joyride)
+// Copy the selectors you need into your app theme (main.scss) and tweak values.
+
+// Tooltip container
+.react-joyride__tooltip {
+    background-color: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    color: #23273a;
+    max-width: 360px;
+}
+
+// Tooltip title
+.react-joyride__tooltip-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+// Tooltip content
+.react-joyride__tooltip-content {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+// Footer buttons
+.react-joyride__button--back,
+.react-joyride__button--next {
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 8px 14px;
+}
+
+.react-joyride__button--next {
+    background-color: #264ae5;
+    border: none;
+    color: #ffffff;
+}
+
+.react-joyride__button--back {
+    background-color: transparent;
+    border: none;
+    color: #264ae5;
+    margin-right: 6px;
+}
+
+// Overlay tint
+.react-joyride__overlay {
+    background-color: rgba(12, 16, 39, 0.45);
+}
+
+// Spotlight highlight
+.react-joyride__spotlight {
+    border-radius: 8px;
+    box-shadow: 0 0 0 9999px rgba(12, 16, 39, 0.45);
+}
