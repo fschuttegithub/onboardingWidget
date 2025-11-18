@@ -1,143 +1,149 @@
 // Onboarding Widget styling - Professional and soft design
 
-// Tooltip container - Elevated card with soft shadows
-.react-joyride__tooltip {
-    background-color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    color: #333333;
-    font-family: var(--font-family-default, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
-    max-width: 420px;
-    padding: 20px;
-    text-align: left;
-}
-
-// Tooltip title - Left aligned, bold
-.react-joyride__tooltip-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #1a1a1a;
-    text-align: left;
-}
-
-// Tooltip content - Left aligned
-.react-joyride__tooltip-content {
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 16px;
-    color: #333333;
-    text-align: left;
-}
-
-// Footer section - Improved layout with step counter
-.react-joyride__tooltip-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-// Progress indicator - Subtle and on the left
-.react-joyride__tooltip-footer .react-joyride__step {
-    font-size: 12px;
-    color: #999999;
-    font-weight: 400;
-    margin-right: auto;
-}
-
-// Button container wrapper
-.react-joyride__tooltip-footer > div {
-    display: flex;
-    gap: 8px;
-}
-
-// Buttons - Modern, clean design
-.react-joyride__button--back,
-.react-joyride__button--next {
-    border-radius: 6px;
-    font-size: 14px;
-    padding: 10px 20px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-    outline: none;
-    
-    &:active {
-        transform: scale(0.98);
-    }
-}
-
-// Primary button (Next/Finish) - Professional blue
-.react-joyride__button--next {
-    background-color: #2540AF;
-    color: #ffffff;
-    box-shadow: 0 2px 4px rgba(37, 64, 175, 0.2);
-    
-    &:hover {
-        background-color: #1e358c;
-        box-shadow: 0 4px 8px rgba(37, 64, 175, 0.3);
-    }
-}
-
-// Secondary button (Back) - Ghost button style
-.react-joyride__button--back {
-    background-color: transparent;
-    color: #555555;
-    font-weight: 400;
-    padding: 10px 16px;
-    
-    &:hover {
-        background-color: #f5f5f5;
+// Namespaced Tooltip Styles
+.onboarding-widget-tooltip {
+    // Tooltip container - Elevated card with soft shadows
+    &.react-joyride__tooltip {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         color: #333333;
+        font-family: var(--font-family-default, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+        max-width: 420px;
+        padding: 20px;
+        text-align: left;
     }
-}
 
-// Close button styling
-.react-joyride__close {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
-    border: none;
-    background: transparent;
-    color: var(--font-color-detail, #6c757d);
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-    
-    &:hover {
-        opacity: 1;
-        color: var(--font-color-default, #333333);
+    // Tooltip title - Left aligned, bold
+    .react-joyride__tooltip-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #1a1a1a;
+        text-align: left;
+    }
+
+    // Tooltip content - Left aligned
+    .react-joyride__tooltip-content {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        color: #333333;
+        text-align: left;
+    }
+
+    // Footer section - Improved layout with step counter
+    .react-joyride__tooltip-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+
+        // Progress indicator - Subtle and on the left
+        .react-joyride__step {
+            font-size: 12px;
+            color: #999999;
+            font-weight: 400;
+            margin-right: auto;
+        }
+
+        // Button container wrapper
+        & > div {
+            display: flex;
+            gap: 8px;
+        }
+    }
+
+    // Buttons - Modern, clean design
+    .react-joyride__button--back,
+    .react-joyride__button--next {
+        border-radius: 6px;
+        font-size: 14px;
+        padding: 10px 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        outline: none;
+        
+        &:active {
+            transform: scale(0.98);
+        }
+    }
+
+    // Primary button (Next/Finish) - Professional blue
+    .react-joyride__button--next {
+        background-color: #2540AF;
+        color: #ffffff;
+        box-shadow: 0 2px 4px rgba(37, 64, 175, 0.2);
+        
+        &:hover {
+            background-color: #1e358c;
+            box-shadow: 0 4px 8px rgba(37, 64, 175, 0.3);
+        }
+    }
+
+    // Secondary button (Back) - Ghost button style
+    .react-joyride__button--back {
+        background-color: transparent;
+        color: #555555;
+        font-weight: 400;
+        padding: 10px 16px;
+        
+        &:hover {
+            background-color: #f5f5f5;
+            color: #333333;
+        }
+    }
+
+    // Close button styling
+    .react-joyride__close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border: none;
+        background: transparent;
+        color: var(--font-color-detail, #6c757d);
+        font-size: 20px;
+        line-height: 1;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+        
+        &:hover {
+            opacity: 1;
+            color: var(--font-color-default, #333333);
+        }
+    }
+
+    // Arrow pointing to target element - Matches card style
+    .react-joyride__tooltip-arrow {
+        // The arrow inherits white background and shadow
+        &::before {
+            background-color: #ffffff;
+        }
     }
 }
 
 // Overlay - Soft, subtle backdrop
+// Note: Global to ensure it covers the screen correctly
 .react-joyride__overlay {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
 // Spotlight - Soft highlight with padding buffer
+// Note: Global
 .react-joyride__spotlight {
     border-radius: 8px;
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
 }
 
-// Arrow pointing to target element - Matches card style
-.react-joyride__tooltip-arrow {
-    // The arrow inherits white background and shadow
-    &::before {
-        background-color: #ffffff;
-    }
-}
-
 // Floater wrapper - Ensures shadow is visible on arrow
+// Note: Global as it wraps the tooltip
 .__floater__arrow {
     polygon {
         fill: #ffffff;

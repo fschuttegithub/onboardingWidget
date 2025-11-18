@@ -6,6 +6,7 @@ import "./ui/OnboardingWidget.scss";
 import { JoyrideComponent } from "./components/OnboardingWidgetComponent";
 
 const WIDGET_CLASS = "onboarding-widget";
+const TOOLTIP_CLASS = "onboarding-widget-tooltip";
 const SIMPLE_SELECTOR_PATTERN = /^[A-Za-z][\w-]*$/;
 
 const formatSelector = raw => {
@@ -263,11 +264,6 @@ function OnboardingWidget(props) {
                         return null;
                     }
                     
-                    // Warn if target element doesn't exist in DOM
-                    if (typeof document !== "undefined" && !document.querySelector(targetSelector)) {
-                        console.warn(`[OnboardingWidget] Target not found: "${targetSelector}"`);
-                    }
-                    
                     const widgetContent = stepWidget?.get?.(item);
                     if (widgetContent === null || widgetContent === undefined) {
                         return null;
@@ -277,12 +273,23 @@ function OnboardingWidget(props) {
                         target: targetSelector,
                         disableBeacon: true,
                         content: createContentNode(widgetContent, requestReposition),
-                        floaterProps: popperFloaterProps
+                        floaterProps: popperFloaterProps,
+                        className: TOOLTIP_CLASS
                     };
                 })
                 .filter(step => step !== null),
         [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps]
     );
+
+    useEffect(() => {
+        if (typeof document !== "undefined" && joyrideSteps.length > 0) {
+            joyrideSteps.forEach(step => {
+                if (step.target && !document.querySelector(step.target)) {
+                    console.warn(`[OnboardingWidget] Target not found: "${step.target}"`);
+                }
+            });
+        }
+    }, [joyrideSteps]);
 
     const stepsReady = joyrideSteps.length > 0;
 
@@ -398,16 +405,11 @@ function OnboardingWidget(props) {
             }
             if (status === STATUS.FINISHED && !tourState.hasReportedFinish) {
                 dispatch({ type: TOUR_ACTIONS.REPORT_FINISH });
-                if (!tryExecuteAction(props.onTourFinish)) {
-                    tryExecuteAction(props.onTourExit);
-                }
+                tryExecuteAction(props.onTourFinish);
             }
             if (exitRequested && !tourState.hasReportedExit && status !== STATUS.FINISHED) {
                 dispatch({ type: TOUR_ACTIONS.REPORT_EXIT });
-                const executedExit = tryExecuteAction(props.onTourExit);
-                if (!executedExit) {
-                    tryExecuteAction(props.onTourFinish);
-                }
+                tryExecuteAction(props.onTourExit);
             }
         },
         [props.onTourExit, props.onTourFinish, props.runTrigger, tourState.hasReportedFinish, tourState.hasReportedExit]
