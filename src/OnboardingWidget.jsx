@@ -143,8 +143,7 @@ const tourReducer = (state, action) => {
                 run: true,
                 pendingStart: false,
                 hasReportedFinish: false,
-                hasReportedExit: false,
-                tourKey: state.tourKey + 1 // Increment key to force remount and reset
+                hasReportedExit: false
             };
         case TOUR_ACTIONS.STOP_TOUR:
             return {
@@ -296,8 +295,7 @@ function OnboardingWidget(props) {
         autoStarted: false,
         hasReportedFinish: false,
         hasReportedExit: false,
-        prevTrigger: triggerValue ?? false,
-        tourKey: 0
+        prevTrigger: triggerValue ?? false
     });
 
     // Handle trigger-based tour start/stop
@@ -423,18 +421,19 @@ function OnboardingWidget(props) {
 
     return (
         <div className={combinedClassName} style={props.style} tabIndex={props.tabIndex}>
-            <JoyrideComponent
-                key={tourState.tourKey}
-                run={tourState.run}
-                steps={joyrideSteps}
-                showProgress={showProgress}
-                callback={handleJoyride}
-                styles={stylesOverride}
-                locale={locale}
-                continuous
-                showSkipButton={false}
-                showBackButton={Boolean(BackButtonText)}
-            />
+            {tourState.run && (
+                <JoyrideComponent
+                    run={true}
+                    steps={joyrideSteps}
+                    showProgress={showProgress}
+                    callback={handleJoyride}
+                    styles={stylesOverride}
+                    locale={locale}
+                    continuous
+                    showSkipButton={false}
+                    showBackButton={Boolean(BackButtonText)}
+                />
+            )}
         </div>
     );
 }
