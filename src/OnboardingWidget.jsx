@@ -132,8 +132,7 @@ const TOUR_ACTIONS = {
     REPORT_FINISH: "REPORT_FINISH",
     REPORT_EXIT: "REPORT_EXIT",
     RESET_REPORTS: "RESET_REPORTS",
-    UPDATE_PREV_TRIGGER: "UPDATE_PREV_TRIGGER",
-    SET_STEP_INDEX: "SET_STEP_INDEX"
+    UPDATE_PREV_TRIGGER: "UPDATE_PREV_TRIGGER"
 };
 
 const tourReducer = (state, action) => {
@@ -145,14 +144,13 @@ const tourReducer = (state, action) => {
                 pendingStart: false,
                 hasReportedFinish: false,
                 hasReportedExit: false,
-                stepIndex: 0 // Always start from the first step
+                tourKey: state.tourKey + 1 // Increment key to force remount and reset
             };
         case TOUR_ACTIONS.STOP_TOUR:
             return {
                 ...state,
                 run: false,
-                pendingStart: false,
-                stepIndex: 0 // Reset to first step when tour stops
+                pendingStart: false
             };
         case TOUR_ACTIONS.SET_PENDING_START:
             return {
@@ -194,11 +192,6 @@ const tourReducer = (state, action) => {
             return {
                 ...state,
                 prevTrigger: action.payload
-            };
-        case TOUR_ACTIONS.SET_STEP_INDEX:
-            return {
-                ...state,
-                stepIndex: action.payload
             };
         default:
             return state;
@@ -304,7 +297,7 @@ function OnboardingWidget(props) {
         hasReportedFinish: false,
         hasReportedExit: false,
         prevTrigger: triggerValue ?? false,
-        stepIndex: 0
+        tourKey: 0
     });
 
     // Handle trigger-based tour start/stop
@@ -393,12 +386,7 @@ function OnboardingWidget(props) {
             if (!data) {
                 return;
             }
-            const { status, type, action, index } = data;
-            
-            // Update step index as user navigates
-            if (typeof index === "number" && index !== tourState.stepIndex) {
-                dispatch({ type: TOUR_ACTIONS.SET_STEP_INDEX, payload: index });
-            }
+            const { status, type, action } = data;
             
             const exitRequested = status === STATUS.SKIPPED || action === ACTIONS.CLOSE;
             const shouldStop = type === "tour:end" || status === STATUS.FINISHED || exitRequested;
@@ -424,7 +412,7 @@ function OnboardingWidget(props) {
                 }
             }
         },
-        [props.onTourExit, props.onTourFinish, props.runTrigger, tourState.hasReportedFinish, tourState.hasReportedExit, tourState.stepIndex]
+        [props.onTourExit, props.onTourFinish, props.runTrigger, tourState.hasReportedFinish, tourState.hasReportedExit]
     );
 
     const combinedClassName = classNames(WIDGET_CLASS, props.class);
@@ -436,9 +424,9 @@ function OnboardingWidget(props) {
     return (
         <div className={combinedClassName} style={props.style} tabIndex={props.tabIndex}>
             <JoyrideComponent
+                key={tourState.tourKey}
                 run={tourState.run}
                 steps={joyrideSteps}
-                stepIndex={tourState.stepIndex}
                 showProgress={showProgress}
                 callback={handleJoyride}
                 styles={stylesOverride}

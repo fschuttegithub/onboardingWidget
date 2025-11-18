@@ -6,7 +6,6 @@ const floaterProps = { disableAnimation: true };
 export const JoyrideComponent = ({
     run,
     steps,
-    stepIndex,
     showProgress,
     callback,
     styles,
@@ -18,7 +17,6 @@ export const JoyrideComponent = ({
     <Joyride
         run={run}
         steps={steps}
-        stepIndex={stepIndex}
         showProgress={showProgress}
         callback={callback}
         disableBeacon
