@@ -347,79 +347,25 @@ function OnboardingWidget(props) {
         }
     }, [stepsReady, tourState.pendingStart, tourState.run]);
 
-    const defaultStyles = {
-        buttonNext: {
-            backgroundColor: "#2540AF",
-            color: "#ffffff",
-            borderRadius: "6px",
-            fontSize: "14px",
-            padding: "10px 20px",
-            fontWeight: 500,
-            border: "none",
-            boxShadow: "0 2px 4px rgba(37, 64, 175, 0.2)"
-        },
-        buttonBack: {
-            backgroundColor: "transparent",
-            color: "#555555",
-            borderRadius: "6px",
-            fontSize: "14px",
-            padding: "10px 16px",
-            fontWeight: 400,
-            border: "none"
-        },
-        tooltip: {
-            backgroundColor: "#ffffff",
-            borderRadius: "8px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-            color: "#333333",
-            fontSize: "14px",
-            padding: "20px",
-            textAlign: "left"
-        },
-        tooltipTitle: {
-            fontSize: "18px",
-            fontWeight: 600,
-            marginBottom: "12px",
-            color: "#1a1a1a",
-            textAlign: "left"
-        },
-        tooltipContent: {
-            fontSize: "14px",
-            lineHeight: "1.6",
-            marginBottom: "16px",
-            color: "#333333",
-            textAlign: "left"
-        },
-        overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.6)"
-        },
-        spotlight: {
-            borderRadius: "8px"
-        }
-    };
-
     const stylesOverride = useMemo(() => {
-        // Start with default styles
-        let finalStyles = { ...defaultStyles };
-
-        // If custom JSON is provided, merge it with defaults
-        if (stylesJson && stylesJson.status === "available") {
-            const raw = (stylesJson.value ?? "").trim();
-            if (raw) {
-                try {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && typeof parsed === "object") {
-                        finalStyles = { ...finalStyles, ...parsed };
-                    } else {
-                        console.warn("[OnboardingWidget] Custom styles JSON must resolve to an object.");
-                    }
-                } catch (error) {
-                    console.warn("[OnboardingWidget] Unable to parse custom styles JSON.", error);
-                }
+        if (!stylesJson || stylesJson.status !== "available") {
+            return undefined;
+        }
+        const raw = (stylesJson.value ?? "").trim();
+        if (!raw) {
+            return undefined;
+        }
+        try {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === "object") {
+                return parsed;
             }
+            console.warn("[OnboardingWidget] Custom styles JSON must resolve to an object.");
+        } catch (error) {
+            console.warn("[OnboardingWidget] Unable to parse custom styles JSON.", error);
         }
 
-        return finalStyles;
+        return undefined;
     }, [stylesJson]);
 
     const locale = useMemo(
