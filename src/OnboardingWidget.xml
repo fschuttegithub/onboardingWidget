@@ -16,71 +16,80 @@
         <propertyGroup caption="General">
             <property key="runTrigger" type="attribute" required="false">
                 <caption>Run trigger</caption>
-                <description>Boolean attribute. When it changes from false to true the tour starts.</description>
+                <description>Boolean attribute. When this value is true, the tour runs. If closed, it won't restart until the value is reset or the page reloads.</description>
                 <attributeTypes>
                     <attributeType name="Boolean" />
                 </attributeTypes>
             </property>
-            <property key="showProgress" type="boolean" defaultValue="true">
+            <property key="showProgress" type="enumeration" defaultValue="dots">
                 <caption>Show progress</caption>
-                <description>Display the current and total step count (e.g. 2/5).</description>
+                <description>Choose how to display the progress indicator.</description>
+                <enumerationValues>
+                    <enumerationValue key="none">None</enumerationValue>
+                    <enumerationValue key="dots">Dots</enumerationValue>
+                    <enumerationValue key="fraction">Step count (1/3)</enumerationValue>
+                </enumerationValues>
+            </property>
+            <property key="onTourFinish" type="action" required="false">
+                <caption>On tour finish</caption>
+                <description>Action to execute after the last step is completed.</description>
+            </property>
+            <property key="onTourExit" type="action" required="false">
+                <caption>On tour exit</caption>
+                <description>Action to execute when the user closes or skips the tour before finishing.</description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Steps">
+            <property key="steps" type="datasource" isList="true" required="true">
+                <caption>Steps data source</caption>
+                <description>Data source returning the list of tour step objects.</description>
+            </property>
+            <property key="stepTarget" type="attribute" dataSource="steps" required="true">
+                <caption>Target selector</caption>
+                <description>String attribute containing the CSS selector for the target element (e.g., .my-class or #my-id).</description>
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="stepWidget" type="widgets" dataSource="steps">
+                <caption>Step content</caption>
+                <description>Widgets to render inside the tooltip for each step.</description>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Styling">
+            <property key="primaryColor" type="string" defaultValue="#2540AF" required="false">
+                <caption>Primary color</caption>
+                <description>Main color used for buttons and active elements.</description>
+            </property>
+            <property key="backgroundColor" type="string" defaultValue="#ffffff" required="false">
+                <caption>Background color</caption>
+                <description>Background color of the tooltip card.</description>
+            </property>
+            <property key="textColor" type="string" defaultValue="#333333" required="false">
+                <caption>Text color</caption>
+                <description>Color of the text inside the tooltip.</description>
+            </property>
+            <property key="borderRadius" type="integer" defaultValue="8" required="true">
+                <caption>Border radius</caption>
+                <description>Corner radius of the tooltip card (in pixels).</description>
             </property>
             <property key="stylesJson" type="textTemplate" required="false">
                 <caption>Custom styles (JSON)</caption>
-                <description>Optional JSON for react-joyride styles. Leave empty to use the library defaults. See https://docs.react-joyride.com/styling for the structure.
-                </description>
+                <description>Optional JSON object to override react-joyride styles. See https://docs.react-joyride.com/styling for structure.</description>
             </property>
         </propertyGroup>
         <propertyGroup caption="Text">
             <property key="BackButtonText" type="string" defaultValue="Back" required="true">
-                <caption>Back button text</caption>
-                <description>Text for the 'Back' button.</description>
+                <caption>Back button label</caption>
+                <description>Text to display on the 'Back' button.</description>
             </property>
             <property key="NextButtonText" type="string" defaultValue="Next" required="true">
-                <caption>Next button text</caption>
-                <description>Text for the 'Next' button.</description>
+                <caption>Next button label</caption>
+                <description>Text to display on the 'Next' button.</description>
             </property>
             <property key="FinishButtonText" type="string" defaultValue="Finish" required="true">
-                <caption>Finish button text</caption>
-                <description>Text for the 'Finish' button.</description>
-            </property>
-        </propertyGroup>
-        <propertyGroup caption="Step Data">
-            <property key="steps" type="datasource" isList="true" required="true">
-                <caption>Steps</caption>
-                <description>Datasource returning the tour steps.</description>
-            </property>
-            <property key="stepTarget" type="attribute" dataSource="steps" required="true">
-                <caption>Target selector</caption>
-                <description>CSS selector that identifies the target element.</description>
-                <attributeTypes>
-                    <attributeType name="String" />
-                </attributeTypes>
-            </property>
-            <property key="stepOrder" type="attribute" dataSource="steps" required="false">
-                <caption>Sort order (optional)</caption>
-                <description>Sort steps ascending using this attribute.</description>
-                <attributeTypes>
-                    <attributeType name="Decimal" />
-                    <attributeType name="Integer" />
-                    <attributeType name="Long" />
-                    <attributeType name="AutoNumber" />
-                    <attributeType name="String" />
-                </attributeTypes>
-            </property>
-        </propertyGroup>
-        <propertyGroup caption="Events">
-            <property key="onTourFinish" type="action" required="false">
-                <caption>On tour finish</caption>
-                <description>Executed after the last step completes.</description>
-            </property>
-            <property key="onTourExit" type="action" required="false">
-                <caption>On tour exit</caption>
-                <description>Executed when the user closes or skips the tour before finishing.</description>
-            </property>
-            <property key="stepWidget" type="widgets" dataSource="steps">
-                <caption>step Content</caption>
-                <description>Widgets rendered in the popup for every step.</description>
+                <caption>Finish button label</caption>
+                <description>Text to display on the 'Finish' button.</description>
             </property>
         </propertyGroup>
     </properties>

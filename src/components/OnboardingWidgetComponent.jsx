@@ -1,6 +1,8 @@
 ﻿import Joyride from "react-joyride";
 import { createElement } from "react";
 
+import { CustomTooltip } from "./CustomTooltip";
+
 const floaterProps = { disableAnimation: true };
 
 export const JoyrideComponent = ({
@@ -30,6 +32,7 @@ export const JoyrideComponent = ({
         showBackButton={showBackButton}
         spotlightClicks={spotlightClicks}
         disableOverlayClose={disableOverlayClose}
+        tooltipComponent={CustomTooltip}
     />
 );
 

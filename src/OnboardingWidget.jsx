@@ -79,34 +79,6 @@ const ObservedStepContent = ({ children, onResize }) => {
 
 const createContentNode = (widgetContent, onResize) => createElement(ObservedStepContent, { onResize }, widgetContent);
 
-const compareStepOrder = (orderAttribute, a, b) => {
-    const aValue = getAttributeValue(orderAttribute, a);
-    const bValue = getAttributeValue(orderAttribute, b);
-
-    if (aValue == null && bValue == null) {
-        return 0;
-    }
-    if (aValue == null) {
-        return 1;
-    }
-    if (bValue == null) {
-        return -1;
-    }
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
-        return aValue - bValue;
-    }
-
-    const aNumber = Number(aValue);
-    const bNumber = Number(bValue);
-
-    if (!Number.isNaN(aNumber) && !Number.isNaN(bNumber)) {
-        return aNumber - bNumber;
-    }
-
-    return `${aValue}`.localeCompare(`${bValue}`, undefined, { numeric: true, sensitivity: "base" });
-};
-
 const tryExecuteAction = action => {
     if (!action || typeof action.execute !== "function") {
         return false;
@@ -199,8 +171,19 @@ const tourReducer = (state, action) => {
 };
 
 function OnboardingWidget(props) {
-    const { steps, stepTarget, stepOrder, stylesJson, BackButtonText, NextButtonText, FinishButtonText, stepWidget } =
-        props;
+    const {
+        steps,
+        stepTarget,
+        stylesJson,
+        BackButtonText,
+        NextButtonText,
+        FinishButtonText,
+        stepWidget,
+        primaryColor,
+        backgroundColor,
+        textColor,
+        borderRadius
+    } = props;
 
     const stepsAvailable = steps?.status === "available";
     const rawItems = stepsAvailable && Array.isArray(steps?.items) ? steps.items : undefined;
@@ -231,14 +214,9 @@ function OnboardingWidget(props) {
         if (!rawItems || rawItems.length === 0) {
             return [];
         }
-
-        const list = [...rawItems];
-        if (stepOrder && list.length > 1) {
-            list.sort((a, b) => compareStepOrder(stepOrder, a, b));
-        }
-
-        return list;
-    }, [rawItems, stepOrder]);
+        // Return items directly, relying on datasource order
+        return [...rawItems];
+    }, [rawItems]);
 
     const handlePopper = useCallback(
         (popper, type) => {
@@ -263,7 +241,7 @@ function OnboardingWidget(props) {
                     if (!targetSelector) {
                         return null;
                     }
-                    
+
                     const widgetContent = stepWidget?.get?.(item);
                     if (widgetContent === null || widgetContent === undefined) {
                         return null;
@@ -274,11 +252,12 @@ function OnboardingWidget(props) {
                         disableBeacon: true,
                         content: createContentNode(widgetContent, requestReposition),
                         floaterProps: popperFloaterProps,
-                        className: TOOLTIP_CLASS
+                        className: TOOLTIP_CLASS,
+                        data: { showProgress: props.showProgress } // Pass showProgress via data property
                     };
                 })
                 .filter(step => step !== null),
-        [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps]
+        [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps, props.showProgress]
     );
 
     useEffect(() => {
@@ -392,12 +371,12 @@ function OnboardingWidget(props) {
                 return;
             }
             const { status, type, action } = data;
-            
+
             const exitRequested = status === STATUS.SKIPPED || action === ACTIONS.CLOSE;
             const shouldStop = type === "tour:end" || status === STATUS.FINISHED || exitRequested;
             if (shouldStop) {
                 dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
-                
+
                 // Reset the run trigger attribute to false when tour stops
                 if (props.runTrigger && typeof props.runTrigger.setValue === "function") {
                     props.runTrigger.setValue(false);
@@ -415,27 +394,74 @@ function OnboardingWidget(props) {
         [props.onTourExit, props.onTourFinish, props.runTrigger, tourState.hasReportedFinish, tourState.hasReportedExit]
     );
 
+    // Merge styles: default joyride options < user JSON override
+    const defaultJoyrideStyles = useMemo(() => ({
+        options: {
+            primaryColor: primaryColor || "#2540AF",
+            textColor: textColor || "#333333",
+            zIndex: 10000
+        }
+    }), [primaryColor, textColor]);
+
+    const finalStyles = useMemo(() => {
+        if (!stylesOverride) {
+            return defaultJoyrideStyles;
+        }
+        // Shallow merge sufficient for options object
+        return {
+            ...defaultJoyrideStyles,
+            ...stylesOverride,
+            options: {
+                ...defaultJoyrideStyles.options,
+                ...(stylesOverride.options || {})
+            }
+        };
+    }, [defaultJoyrideStyles, stylesOverride]);
+
+    const containerStyle = {
+        ...props.style,
+        "--ow-primary": primaryColor || "#2540AF",
+        "--ow-bg": backgroundColor || "#ffffff",
+        "--ow-text": textColor || "#333333",
+        "--ow-radius": borderRadius != null ? `${borderRadius}px` : "8px"
+    };
+
     const combinedClassName = classNames(WIDGET_CLASS, props.class);
-    const showProgress = props.showProgress ?? true;
+    const showProgress = props.showProgress; // Now a string enum: "none" | "dots" | "fraction"
     if (!joyrideSteps.length) {
-        return <div className={combinedClassName} style={props.style} tabIndex={props.tabIndex} />;
+        return <div className={combinedClassName} style={containerStyle} tabIndex={props.tabIndex} />;
     }
 
     return (
-        <div className={combinedClassName} style={props.style} tabIndex={props.tabIndex}>
+        <div className={combinedClassName} style={containerStyle} tabIndex={props.tabIndex}>
             {tourState.run && (
                 <JoyrideComponent
                     run={true}
                     steps={joyrideSteps}
-                    showProgress={showProgress}
+                    showProgress={showProgress === "fraction"} // Only native joyride progress if fraction
                     callback={handleJoyride}
-                    styles={stylesOverride}
+                    styles={finalStyles}
                     locale={locale}
                     continuous
                     showSkipButton={false}
                     showBackButton={Boolean(BackButtonText)}
                     spotlightClicks={false}
                     disableOverlayClose={true}
+                    // Pass the enum value to our custom tooltip component via the step props or context
+                    // Joyride passes all extra props to the tooltip component if we just include them?
+                    // No, we need to pass it via a custom prop or context.
+                    // Actually, Joyride v2 doesn't easily pass custom props to the tooltip component.
+                    // We can inject it into the step objects or use a context, but
+                    // since we are creating the steps in this file, we can add it to the step object directly.
+                    // However, changing steps triggers re-renders.
+                    // Better: pass it as a prop to the JoyrideComponent wrapper which passes it down?
+                    // Wait, CustomTooltip receives all props passed to Joyride? No.
+                    // But we can pass it via the `floaterProps` or similar hack, OR
+                    // we can simply rely on the fact that we are defining the CustomTooltip component.
+                    // Let's check if we can pass extra props to Joyride that get passed to Tooltip.
+                    // According to docs, no.
+                    // BUT, we can pass it as a prop to the JoyrideComponent which can maybe wrap the Tooltip?
+                    // Simplest: Add it to the `step` object in `joyrideSteps`.
                 />
             )}
         </div>
