@@ -89,6 +89,28 @@
     align-self: center;
 }
 
+// Close button styling
+.react-joyride__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: var(--font-color-detail, #6c757d);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+        opacity: 1;
+        color: var(--font-color-default, #333333);
+    }
+}
+
 // Overlay - subtle backdrop
 .react-joyride__overlay {
     background-color: rgba(0, 0, 0, 0.5);

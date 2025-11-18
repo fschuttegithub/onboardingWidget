@@ -12,7 +12,9 @@ export const JoyrideComponent = ({
     locale,
     continuous,
     showSkipButton,
-    showBackButton
+    showBackButton,
+    spotlightClicks,
+    disableOverlayClose
 }) => (
     <Joyride
         run={run}
@@ -26,6 +28,8 @@ export const JoyrideComponent = ({
         continuous={continuous}
         showSkipButton={showSkipButton}
         showBackButton={showBackButton}
+        spotlightClicks={spotlightClicks}
+        disableOverlayClose={disableOverlayClose}
     />
 );
 

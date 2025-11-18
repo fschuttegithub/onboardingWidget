@@ -432,6 +432,8 @@ function OnboardingWidget(props) {
                     continuous
                     showSkipButton={false}
                     showBackButton={Boolean(BackButtonText)}
+                    spotlightClicks={false}
+                    disableOverlayClose={true}
                 />
             )}
         </div>
