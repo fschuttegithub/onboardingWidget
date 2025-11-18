@@ -1,56 +1,109 @@
-// Example styling overrides for the Onboarding Widget (react-joyride)
-// Copy the selectors you need into your app theme (main.scss) and tweak values.
+// Onboarding Widget styling - integrates with Mendix theme
 
-// Tooltip container
+// Tooltip container - uses Mendix card/panel styling
 .react-joyride__tooltip {
-    background-color: #ffffff;
-    border-radius: 6px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    color: #23273a;
-    max-width: 360px;
+    background-color: var(--background-color-primary, #ffffff);
+    border: 1px solid var(--border-color-default, rgba(0, 0, 0, 0.1));
+    border-radius: var(--border-radius-default, 4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: var(--font-color-default, #333333);
+    font-family: var(--font-family-default, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+    max-width: 400px;
+    padding: 16px;
 }
 
 // Tooltip title
 .react-joyride__tooltip-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     margin-bottom: 8px;
+    color: var(--font-color-header, #0a1628);
 }
 
 // Tooltip content
 .react-joyride__tooltip-content {
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    color: var(--font-color-default, #333333);
 }
 
-// Footer buttons
+// Footer section
+.react-joyride__tooltip-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+// Buttons - styled like Mendix buttons
 .react-joyride__button--back,
 .react-joyride__button--next {
-    border-radius: 4px;
+    border-radius: var(--border-radius-default, 4px);
     font-size: 14px;
-    padding: 8px 14px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    
+    &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
 }
 
+// Primary button (Next/Finish) - uses Mendix primary button color
 .react-joyride__button--next {
-    background-color: #264ae5;
-    border: none;
+    background-color: var(--brand-primary, #0595db);
+    border-color: var(--brand-primary, #0595db);
     color: #ffffff;
+    
+    &:hover {
+        background-color: var(--brand-primary-dark, #0476b0);
+        border-color: var(--brand-primary-dark, #0476b0);
+    }
 }
 
+// Secondary button (Back) - uses Mendix secondary button styling
 .react-joyride__button--back {
     background-color: transparent;
-    border: none;
-    color: #264ae5;
-    margin-right: 6px;
+    border-color: var(--border-color-default, #ced4da);
+    color: var(--font-color-default, #333333);
+    
+    &:hover {
+        background-color: var(--background-color-secondary, #f8f9fa);
+        border-color: var(--border-color-default, #ced4da);
+    }
 }
 
-// Overlay tint
+// Progress indicator
+.react-joyride__tooltip-footer .react-joyride__step {
+    font-size: 12px;
+    color: var(--font-color-detail, #6c757d);
+    margin-right: auto;
+    align-self: center;
+}
+
+// Overlay - subtle backdrop
 .react-joyride__overlay {
-    background-color: rgba(12, 16, 39, 0.45);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-// Spotlight highlight
+// Spotlight - highlights target element
 .react-joyride__spotlight {
-    border-radius: 8px;
-    box-shadow: 0 0 0 9999px rgba(12, 16, 39, 0.45);
+    border-radius: var(--border-radius-default, 4px);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+// Content wrapper inside widget
+.onboarding-widget {
+    &__content {
+        // Ensure content renders properly
+        width: 100%;
+    }
 }
