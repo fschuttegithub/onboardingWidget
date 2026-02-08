@@ -1,4 +1,4 @@
-﻿import Joyride from "react-joyride";
+import Joyride from "react-joyride";
 import { createElement } from "react";
 
 import { CustomTooltip } from "./CustomTooltip";
@@ -35,4 +35,3 @@ export const JoyrideComponent = ({
         tooltipComponent={CustomTooltip}
     />
 );
-

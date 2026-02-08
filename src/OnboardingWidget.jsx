@@ -1,4 +1,4 @@
-﻿import { createElement, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { createElement, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import classNames from "classnames";
 import { ACTIONS, STATUS } from "react-joyride";
 
@@ -77,7 +77,8 @@ const ObservedStepContent = ({ children, onResize }) => {
     );
 };
 
-const createContentNode = (widgetContent, onResize) => createElement(ObservedStepContent, { onResize }, widgetContent);
+const createContentNode = (widgetContent, onResize, key) =>
+    createElement(ObservedStepContent, { key, onResize }, widgetContent);
 
 const tryExecuteAction = action => {
     if (!action || typeof action.execute !== "function") {
@@ -236,7 +237,7 @@ function OnboardingWidget(props) {
     const joyrideSteps = useMemo(
         () =>
             orderedItems
-                .map(item => {
+                .map((item, idx) => {
                     const targetSelector = formatSelector(getAttributeValue(stepTarget, item));
                     if (!targetSelector) {
                         return null;
@@ -247,13 +248,15 @@ function OnboardingWidget(props) {
                         return null;
                     }
 
+                    const stepKey = item.id ?? `step-${idx}`;
+
                     return {
                         target: targetSelector,
                         disableBeacon: true,
-                        content: createContentNode(widgetContent, requestReposition),
+                        content: createContentNode(widgetContent, requestReposition, stepKey),
                         floaterProps: popperFloaterProps,
                         className: TOOLTIP_CLASS,
-                        data: { showProgress: props.showProgress } // Pass showProgress via data property
+                        data: { showProgress: props.showProgress }
                     };
                 })
                 .filter(step => step !== null),
@@ -392,13 +395,16 @@ function OnboardingWidget(props) {
     );
 
     // Merge styles: default joyride options < user JSON override
-    const defaultJoyrideStyles = useMemo(() => ({
-        options: {
-            primaryColor: primaryColor || "#2540AF",
-            textColor: textColor || "#333333",
-            zIndex: 10000
-        }
-    }), [primaryColor, textColor]);
+    const defaultJoyrideStyles = useMemo(
+        () => ({
+            options: {
+                primaryColor: primaryColor || "#2540AF",
+                textColor: textColor || "#333333",
+                zIndex: 10000
+            }
+        }),
+        [primaryColor, textColor]
+    );
 
     const finalStyles = useMemo(() => {
         if (!stylesOverride) {

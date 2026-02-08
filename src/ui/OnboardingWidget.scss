@@ -33,11 +33,9 @@
 // 3. Custom Tooltip Component Styling
 .onboarding-widget-tooltip.custom-tooltip {
     background-color: var(--ow-bg, #ffffff);
-    border: 1px solid rgba(0,0,0,0.05); // Added subtle border
+    border: 1px solid rgba(0, 0, 0, 0.05); // Added subtle border
     border-radius: var(--ow-radius, 12px); // Slightly increased radius
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06),
         0 20px 25px -5px rgba(0, 0, 0, 0.1); // Richer shadow
     color: var(--ow-text, #333333);
     font-family: inherit;
@@ -58,7 +56,7 @@
         right: 12px;
         background: transparent;
         border: none;
-        color: #9CA3AF; // Softer gray
+        color: #9ca3af; // Softer gray
         cursor: pointer;
         padding: 8px;
         transition: all 0.2s;
@@ -71,9 +69,18 @@
         height: 32px;
 
         &:hover {
-            color: #4B5563;
-            background-color: rgba(0,0,0,0.05);
+            color: #4b5563;
+            background-color: rgba(0, 0, 0, 0.05);
             transform: rotate(90deg);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--ow-primary, #2540af);
+            outline-offset: 2px;
+        }
+
+        &:focus:not(:focus-visible) {
+            outline: none;
         }
 
         svg {
@@ -129,18 +136,18 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #E5E7EB;
+        background-color: #e5e7eb;
         transition: all 0.3s ease;
 
         &--active {
-            background-color: var(--ow-primary, #2540AF);
+            background-color: var(--ow-primary, #2540af);
             transform: scale(1.25);
         }
     }
 
     .custom-tooltip__fraction {
         font-size: 13px;
-        color: #6B7280;
+        color: #6b7280;
         font-weight: 500;
         font-variant-numeric: tabular-nums;
     }
@@ -161,27 +168,31 @@
         height: 36px;
         box-sizing: border-box;
 
-        &:focus {
-            outline: 2px solid rgba(37, 64, 175, 0.2);
-            outline-offset: 1px;
+        &:focus-visible {
+            outline: 2px solid var(--ow-primary, #2540af);
+            outline-offset: 2px;
+        }
+
+        &:focus:not(:focus-visible) {
+            outline: none;
         }
 
         // Back Button (Ghost)
         &--back {
             background: transparent;
-            color: #6B7280;
+            color: #6b7280;
             padding-left: 8px; // Adjust for icon
             padding-right: 12px;
 
             &:hover {
-                color: #1F2937;
-                background-color: rgba(0,0,0,0.04);
+                color: #1f2937;
+                background-color: rgba(0, 0, 0, 0.04);
             }
         }
 
         // Primary Button (Next/Finish)
         &--primary {
-            background-color: var(--ow-primary, #2540AF);
+            background-color: var(--ow-primary, #2540af);
             color: #ffffff;
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
