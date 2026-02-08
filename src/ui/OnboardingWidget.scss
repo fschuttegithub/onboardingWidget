@@ -1,5 +1,17 @@
 // Onboarding Widget styling - Professional and soft design
 
+// Keyframes for entry animation
+@keyframes tooltip-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 // 1. Overlay & Spotlight (Global overrides for React Joyride)
 .react-joyride__overlay {
     background-color: rgba(0, 0, 0, 0.6);
@@ -7,11 +19,10 @@
 
 .react-joyride__spotlight {
     border-radius: 8px;
-    // Ensure the spotlight effect works as expected
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6); 
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
 }
 
-// 2. Arrow styling (Global because it is outside the tooltip container in DOM)
+// 2. Arrow styling
 .__floater__arrow {
     polygon {
         fill: var(--ow-bg, #ffffff);
@@ -22,19 +33,23 @@
 // 3. Custom Tooltip Component Styling
 .onboarding-widget-tooltip.custom-tooltip {
     background-color: var(--ow-bg, #ffffff);
-    border: none;
-    border-radius: var(--ow-radius, 8px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0,0,0,0.05); // Added subtle border
+    border-radius: var(--ow-radius, 12px); // Slightly increased radius
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+        0 20px 25px -5px rgba(0, 0, 0, 0.1); // Richer shadow
     color: var(--ow-text, #333333);
-    font-family: var(--font-family-default, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+    font-family: inherit;
     max-width: 420px;
-    min-width: 300px;
-    padding: 24px;
+    min-width: 320px;
+    padding: 24px 48px 24px 24px;
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 16px;
     box-sizing: border-box;
+    animation: tooltip-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; // Added animation
 
     // Close Button
     .custom-tooltip__close {
@@ -43,32 +58,38 @@
         right: 12px;
         background: transparent;
         border: none;
-        color: #999;
+        color: #9CA3AF; // Softer gray
         cursor: pointer;
-        font-size: 24px;
-        line-height: 1;
-        padding: 4px;
-        transition: color 0.2s;
+        padding: 8px;
+        transition: all 0.2s;
         z-index: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 4px;
+        border-radius: 50%; // Circular hover
+        width: 32px;
+        height: 32px;
 
         &:hover {
-            color: #333;
+            color: #4B5563;
             background-color: rgba(0,0,0,0.05);
+            transform: rotate(90deg);
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2.5;
         }
     }
 
     // Body Content
     .custom-tooltip__body {
-        font-size: 14px;
+        font-size: 15px; // Slightly larger
         line-height: 1.6;
         margin-bottom: 8px;
         flex-grow: 1;
-        
-        // Mendix widgets inside body should take full width
+
         .onboarding-widget__content {
             width: 100%;
         }
@@ -77,84 +98,84 @@
     // Footer Container
     .custom-tooltip__footer {
         display: flex;
-        align-items: center; // Ensures vertical centering
+        align-items: center;
         justify-content: space-between;
         margin-top: auto;
-        padding-top: 8px;
-        height: 36px; // Fix height to prevent stretching
+        padding-top: 12px; // More breathing room
+        height: 40px;
     }
 
-    // Footer Sections (Left/Right/Center)
     .custom-tooltip__footer-left,
     .custom-tooltip__footer-right {
-        flex: 1; // Ensure buttons take equal space or push dots to center
+        flex: 1;
         display: flex;
         align-items: center;
     }
-    
+
     .custom-tooltip__footer-right {
         justify-content: flex-end;
     }
 
-    // Dot Navigation & Fraction
+    // Dot Navigation
     .custom-tooltip__dots {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         justify-content: center;
-        flex: 2; // Give dots more space in center
+        flex: 2;
     }
 
     .custom-tooltip__dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #e0e0e0;
-        transition: background-color 0.3s ease, transform 0.3s ease;
+        background-color: #E5E7EB;
+        transition: all 0.3s ease;
 
         &--active {
             background-color: var(--ow-primary, #2540AF);
-            transform: scale(1.2);
+            transform: scale(1.25);
         }
     }
 
     .custom-tooltip__fraction {
-        font-size: 12px;
-        color: #888;
+        font-size: 13px;
+        color: #6B7280;
         font-weight: 500;
+        font-variant-numeric: tabular-nums;
     }
 
     // Buttons
     .custom-tooltip__button {
         border: none;
-        border-radius: 6px;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
         padding: 8px 16px;
-        transition: all 0.2s ease;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        height: 36px; // Consistent button height
+        gap: 6px; // Space for icons
+        height: 36px;
         box-sizing: border-box;
-        
+
         &:focus {
             outline: 2px solid rgba(37, 64, 175, 0.2);
+            outline-offset: 1px;
         }
 
         // Back Button (Ghost)
         &--back {
             background: transparent;
-            color: #666;
-            padding-left: 0; // Align left with text
-            padding-right: 0;
+            color: #6B7280;
+            padding-left: 8px; // Adjust for icon
+            padding-right: 12px;
 
             &:hover {
-                color: #333;
+                color: #1F2937;
                 background-color: rgba(0,0,0,0.04);
-                padding-left: 8px;
-                padding-right: 8px;
             }
         }
 
@@ -162,21 +183,22 @@
         &--primary {
             background-color: var(--ow-primary, #2540AF);
             color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
             &:hover {
-                filter: brightness(0.9);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                filter: brightness(1.1); // Brighten slightly instead of darken
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                transform: translateY(-1px); // Lift effect
             }
-            
+
             &:active {
-                transform: translateY(1px);
+                transform: translateY(0);
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             }
         }
     }
 }
 
-// Ensure content wrapper inside widget renders properly
 .onboarding-widget {
     &__content {
         width: 100%;

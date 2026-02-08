@@ -1,6 +1,32 @@
 import { createElement } from "react";
 import classNames from "classnames";
 
+// SVG Icons
+const IconClose = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+);
+
+const IconArrowRight = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18l6-6-6-6" />
+    </svg>
+);
+
+const IconArrowLeft = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+    </svg>
+);
+
+const IconCheck = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+);
+
 export const CustomTooltip = ({
     index,
     size,
@@ -26,7 +52,7 @@ export const CustomTooltip = ({
                 {...closeProps}
                 aria-label="Close"
             >
-                <span aria-hidden="true">&times;</span>
+                <IconClose />
             </button>
 
             {/* Main Content Body */}
@@ -42,7 +68,8 @@ export const CustomTooltip = ({
                             className="custom-tooltip__button custom-tooltip__button--back"
                             {...backProps}
                         >
-                            {backProps.title || "Back"}
+                            <IconArrowLeft />
+                            <span>{backProps.title || "Back"}</span>
                         </button>
                     )}
                 </div>
@@ -73,7 +100,8 @@ export const CustomTooltip = ({
                         {...primaryProps}
                         title={primaryTitle} // Ensure the HTML title attribute is correct
                     >
-                        {primaryTitle}
+                        <span>{primaryTitle}</span>
+                        {isLastStep ? <IconCheck /> : <IconArrowRight />}
                     </button>
                 </div>
             </div>

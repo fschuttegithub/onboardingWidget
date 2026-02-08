@@ -300,9 +300,6 @@ function OnboardingWidget(props) {
             // Trigger changed from true to false - stop tour
             dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
             dispatch({ type: TOUR_ACTIONS.RESET_REPORTS });
-        } else if (triggerValue && tourState.prevTrigger && !tourState.run && stepsReady) {
-            // Trigger remains true but tour was closed externally (overlay click) - restart tour
-            dispatch({ type: TOUR_ACTIONS.START_TOUR });
         }
 
         dispatch({ type: TOUR_ACTIONS.UPDATE_PREV_TRIGGER, payload: triggerValue });
@@ -447,21 +444,6 @@ function OnboardingWidget(props) {
                     showBackButton={Boolean(BackButtonText)}
                     spotlightClicks={false}
                     disableOverlayClose={true}
-                    // Pass the enum value to our custom tooltip component via the step props or context
-                    // Joyride passes all extra props to the tooltip component if we just include them?
-                    // No, we need to pass it via a custom prop or context.
-                    // Actually, Joyride v2 doesn't easily pass custom props to the tooltip component.
-                    // We can inject it into the step objects or use a context, but
-                    // since we are creating the steps in this file, we can add it to the step object directly.
-                    // However, changing steps triggers re-renders.
-                    // Better: pass it as a prop to the JoyrideComponent wrapper which passes it down?
-                    // Wait, CustomTooltip receives all props passed to Joyride? No.
-                    // But we can pass it via the `floaterProps` or similar hack, OR
-                    // we can simply rely on the fact that we are defining the CustomTooltip component.
-                    // Let's check if we can pass extra props to Joyride that get passed to Tooltip.
-                    // According to docs, no.
-                    // BUT, we can pass it as a prop to the JoyrideComponent which can maybe wrap the Tooltip?
-                    // Simplest: Add it to the `step` object in `joyrideSteps`.
                 />
             )}
         </div>
