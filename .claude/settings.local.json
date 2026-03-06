@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx pluggable-widgets-tools lint)",
+      "Bash(npm install:*)",
+      "Bash(npx pluggable-widgets-tools lint:fix:*)",
+      "Bash(npx pluggable-widgets-tools:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create --title \"Fix button labels, accessibility, and React key stability\" --body \"$\\(cat <<''EOF''\n## Summary\n- **Fixed bug**: CustomTooltip now uses the configurable `NextButtonText`/`FinishButtonText` props instead of hardcoded \"Next\"/\"Finish\" strings\n- **Accessibility**: Added `role=\"dialog\"`, `aria-modal`, auto-focus, Escape key support, ARIA labels on progress dots, `aria-live` on fraction display, and WCAG-compliant `:focus-visible` outlines\n- **React stability**: ObservedStepContent nodes now receive stable `key` props via `item.id` to prevent unnecessary remounts\n\n## Test plan\n- [ ] Verify Next/Finish button labels reflect configured text in widget properties\n- [ ] Verify pressing Escape closes the tour\n- [ ] Verify tooltip receives focus when the tour starts and on each step change\n- [ ] Verify screen reader announces \"Tour step X of Y\" when tooltip appears\n- [ ] Verify dot indicators have proper ARIA labels \\(inspect with accessibility tools\\)\n- [ ] Verify focus outlines appear on keyboard navigation but not on mouse click\n- [ ] Verify build passes \\(`npm run build`\\)\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\nEOF\n\\)\")",
+      "Bash(where:*)"
+    ]
+  }
+}
