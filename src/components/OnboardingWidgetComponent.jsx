@@ -1,5 +1,5 @@
 import Joyride from "react-joyride";
-import { createElement } from "react";
+import { createElement, useCallback } from "react";
 
 import { CustomTooltip } from "./CustomTooltip";
 
@@ -16,22 +16,39 @@ export const JoyrideComponent = ({
     showSkipButton,
     showBackButton,
     spotlightClicks,
-    disableOverlayClose
-}) => (
-    <Joyride
-        run={run}
-        steps={steps}
-        showProgress={showProgress}
-        callback={callback}
-        disableBeacon
-        floaterProps={floaterProps}
-        styles={styles}
-        locale={locale}
-        continuous={continuous}
-        showSkipButton={showSkipButton}
-        showBackButton={showBackButton}
-        spotlightClicks={spotlightClicks}
-        disableOverlayClose={disableOverlayClose}
-        tooltipComponent={CustomTooltip}
-    />
-);
+    disableOverlayClose,
+    totalStepCount,
+    stepOffset,
+    progressMode
+}) => {
+    const TooltipComponent = useCallback(
+        joyrideProps => (
+            <CustomTooltip
+                {...joyrideProps}
+                totalStepCount={totalStepCount}
+                stepOffset={stepOffset}
+                progressMode={progressMode}
+            />
+        ),
+        [totalStepCount, stepOffset, progressMode]
+    );
+
+    return (
+        <Joyride
+            run={run}
+            steps={steps}
+            showProgress={showProgress}
+            callback={callback}
+            disableBeacon
+            floaterProps={floaterProps}
+            styles={styles}
+            locale={locale}
+            continuous={continuous}
+            showSkipButton={showSkipButton}
+            showBackButton={showBackButton}
+            spotlightClicks={spotlightClicks}
+            disableOverlayClose={disableOverlayClose}
+            tooltipComponent={TooltipComponent}
+        />
+    );
+};

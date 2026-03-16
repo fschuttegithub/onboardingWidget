@@ -9,6 +9,12 @@ const WIDGET_CLASS = "onboarding-widget";
 const TOOLTIP_CLASS = "onboarding-widget-tooltip";
 const SIMPLE_SELECTOR_PATTERN = /^[A-Za-z][\w-]*$/;
 
+const mapProgressIndicator = value => {
+    if (!value) return "dots";
+    const v = value.toLowerCase();
+    return v === "step_count" ? "fraction" : v; // None→"none", Dots→"dots", Step_Count→"fraction"
+};
+
 const formatSelector = raw => {
     if (raw === null || raw === undefined) {
         return null;
@@ -183,7 +189,10 @@ function OnboardingWidget(props) {
         primaryColor,
         backgroundColor,
         textColor,
-        borderRadius
+        borderRadius,
+        totalStepCount,
+        stepOffset,
+        progressMode
     } = props;
 
     const stepsAvailable = steps?.status === "available";
@@ -256,11 +265,11 @@ function OnboardingWidget(props) {
                         content: createContentNode(widgetContent, requestReposition, stepKey),
                         floaterProps: popperFloaterProps,
                         className: TOOLTIP_CLASS,
-                        data: { showProgress: props.showProgress }
+                        data: { showProgress: mapProgressIndicator(props.showProgress?.value) }
                     };
                 })
                 .filter(step => step !== null),
-        [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps, props.showProgress]
+        [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps, props.showProgress?.value]
     );
 
     useEffect(() => {
@@ -446,7 +455,7 @@ function OnboardingWidget(props) {
     };
 
     const combinedClassName = classNames(WIDGET_CLASS, props.class);
-    const showProgress = props.showProgress; // Now a string enum: "none" | "dots" | "fraction"
+
     const isLoading = props.runTrigger?.status === "loading" || props.steps?.status === "loading";
     if (isLoading) {
         return null; // Return nothing while Mendix is actively fetching data
@@ -462,7 +471,7 @@ function OnboardingWidget(props) {
                 <JoyrideComponent
                     run={true}
                     steps={joyrideSteps}
-                    showProgress={showProgress === "fraction"} // Only native joyride progress if fraction
+                    showProgress={false} // CustomTooltip handles all progress display
                     callback={handleJoyride}
                     styles={finalStyles}
                     locale={locale}
@@ -471,6 +480,9 @@ function OnboardingWidget(props) {
                     showBackButton={Boolean(BackButtonText)}
                     spotlightClicks={false}
                     disableOverlayClose={true}
+                    totalStepCount={totalStepCount?.value != null ? Number(totalStepCount.value) : null}
+                    stepOffset={stepOffset?.value != null ? Number(stepOffset.value) : 0}
+                    progressMode={(progressMode?.value ?? "local").toLowerCase()}
                 />
             )}
         </div>

@@ -67,11 +67,31 @@ const IconCheck = () => (
     </svg>
 );
 
-export const CustomTooltip = ({ index, size, step, backProps, closeProps, primaryProps, tooltipProps, isLastStep }) => {
+export const CustomTooltip = ({
+    index,
+    size,
+    step,
+    backProps,
+    closeProps,
+    primaryProps,
+    tooltipProps,
+    isLastStep,
+    totalStepCount,
+    stepOffset,
+    progressMode
+}) => {
     const { content, data } = step;
     const showProgress = data?.showProgress || "dots"; // Default to dots if undefined
 
-    const primaryTitle = primaryProps.title || (isLastStep ? "Finish" : "Next");
+    const resolvedTotal = totalStepCount != null ? totalStepCount : size;
+    const resolvedOffset = stepOffset ?? 0;
+    const isGloballyLastStep =
+        totalStepCount != null ? resolvedOffset + index + 1 === resolvedTotal : isLastStep;
+
+    const displayIndex = progressMode === "global" ? resolvedOffset + index : index;
+    const displayTotal = progressMode === "global" ? resolvedTotal : size;
+
+    const primaryTitle = primaryProps.title || (isGloballyLastStep ? "Finish" : "Next");
 
     const dialogRef = useRef(null);
     useEffect(() => {
@@ -93,7 +113,7 @@ export const CustomTooltip = ({ index, size, step, backProps, closeProps, primar
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
-            aria-label={`Tour step ${index + 1} of ${size}`}
+            aria-label={`Tour step ${displayIndex + 1} of ${displayTotal}`}
             tabIndex={-1}
             onKeyDown={handleKeyDown}
         >
@@ -124,20 +144,20 @@ export const CustomTooltip = ({ index, size, step, backProps, closeProps, primar
                 {/* Navigation Indicators (Dots or Text) */}
                 <div className="custom-tooltip__dots" role="group" aria-label="Tour progress">
                     {showProgress === "dots" &&
-                        Array.from({ length: size }).map((_, i) => (
+                        Array.from({ length: displayTotal }).map((_, i) => (
                             <span
                                 key={i}
                                 className={classNames("custom-tooltip__dot", {
-                                    "custom-tooltip__dot--active": i === index
+                                    "custom-tooltip__dot--active": i === displayIndex
                                 })}
                                 role="img"
-                                aria-label={`Step ${i + 1} of ${size}`}
-                                aria-current={i === index ? "step" : undefined}
+                                aria-label={`Step ${i + 1} of ${displayTotal}`}
+                                aria-current={i === displayIndex ? "step" : undefined}
                             />
                         ))}
                     {showProgress === "fraction" && (
                         <span className="custom-tooltip__fraction" aria-live="polite">
-                            {index + 1} / {size}
+                            {displayIndex + 1} / {displayTotal}
                         </span>
                     )}
                 </div>
@@ -151,7 +171,7 @@ export const CustomTooltip = ({ index, size, step, backProps, closeProps, primar
                         title={primaryTitle} // Ensure the HTML title attribute is correct
                     >
                         <span>{primaryTitle}</span>
-                        {isLastStep ? <IconCheck /> : <IconArrowRight />}
+                        {isGloballyLastStep ? <IconCheck /> : <IconArrowRight />}
                     </button>
                 </div>
             </div>
