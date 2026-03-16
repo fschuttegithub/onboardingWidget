@@ -284,22 +284,35 @@ function OnboardingWidget(props) {
         autoStarted: false,
         hasReportedFinish: false,
         hasReportedExit: false,
-        prevTrigger: triggerValue ?? false
+        prevTrigger: false
     });
+
+    const actionReportedRef = useRef({ finish: false, exit: false });
+
+    useEffect(() => {
+        console.log(`[OnboardingWidget] State update -> triggerStatus: ${props.runTrigger?.status}, triggerValue: ${triggerValue}, stepsReady: ${stepsReady}, tourState:`, tourState);
+    }, [props.runTrigger?.status, triggerValue, stepsReady, tourState]);
 
     // Handle trigger-based tour start/stop
     useEffect(() => {
+        console.log(`[OnboardingWidget] Evaluating trigger -> current: ${triggerValue}, prev: ${tourState.prevTrigger}`);
         if (triggerValue === undefined) {
+            console.log(`[OnboardingWidget] Trigger is undefined. Waiting.`);
             return;
         }
         if (triggerValue && !tourState.prevTrigger) {
+            console.log(`[OnboardingWidget] Trigger became true.`);
+            actionReportedRef.current = { finish: false, exit: false }; // Reset ref for new tour run
             // Trigger changed from false to true - start tour
             if (stepsReady) {
+                console.log(`[OnboardingWidget] Steps are ready, starting tour.`);
                 dispatch({ type: TOUR_ACTIONS.START_TOUR });
             } else {
+                console.log(`[OnboardingWidget] Steps NOT ready yet, setting pending start.`);
                 dispatch({ type: TOUR_ACTIONS.SET_PENDING_START });
             }
         } else if (!triggerValue && tourState.prevTrigger) {
+            console.log(`[OnboardingWidget] Trigger became false, stopping tour.`);
             // Trigger changed from true to false - stop tour
             dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
             dispatch({ type: TOUR_ACTIONS.RESET_REPORTS });
@@ -312,6 +325,7 @@ function OnboardingWidget(props) {
     useEffect(() => {
         if (triggerValue === undefined) {
             if (stepsReady && !tourState.autoStarted) {
+                console.log(`[OnboardingWidget] Auto-starting tour because no trigger value and steps are ready.`);
                 dispatch({ type: TOUR_ACTIONS.MARK_AUTO_STARTED });
                 dispatch({ type: TOUR_ACTIONS.START_TOUR });
             } else if (!stepsReady) {
@@ -325,10 +339,12 @@ function OnboardingWidget(props) {
     // Handle pending start and steps readiness
     useEffect(() => {
         if (stepsReady && tourState.pendingStart) {
+            console.log(`[OnboardingWidget] Steps are now ready, starting pending tour.`);
             dispatch({ type: TOUR_ACTIONS.START_TOUR });
         }
 
         if (!stepsReady && tourState.run) {
+            console.log(`[OnboardingWidget] Steps are no longer ready, stopping tour.`);
             dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
         }
     }, [stepsReady, tourState.pendingStart, tourState.run]);
@@ -375,18 +391,18 @@ function OnboardingWidget(props) {
             const exitRequested = status === STATUS.SKIPPED || action === ACTIONS.CLOSE;
             const shouldStop = type === "tour:end" || status === STATUS.FINISHED || exitRequested;
             if (shouldStop) {
+                console.log(`[OnboardingWidget] Joyride requested stop. type: ${type}, status: ${status}, action: ${action}`);
                 dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
-
-                // Reset the run trigger attribute to false when tour stops
-                if (props.runTrigger && typeof props.runTrigger.setValue === "function") {
-                    props.runTrigger.setValue(false);
-                }
             }
-            if (status === STATUS.FINISHED && !tourState.hasReportedFinish) {
+            if (status === STATUS.FINISHED && !actionReportedRef.current.finish) {
+                actionReportedRef.current.finish = true; // Lock immediately
+                console.log(`[OnboardingWidget] Tour finished, triggering onTourFinish action.`);
                 dispatch({ type: TOUR_ACTIONS.REPORT_FINISH });
                 tryExecuteAction(props.onTourFinish);
             }
-            if (exitRequested && !tourState.hasReportedExit && status !== STATUS.FINISHED) {
+            if (exitRequested && !actionReportedRef.current.exit && status !== STATUS.FINISHED) {
+                actionReportedRef.current.exit = true; // Lock immediately
+                console.log(`[OnboardingWidget] Tour exited early, triggering onTourExit action.`);
                 dispatch({ type: TOUR_ACTIONS.REPORT_EXIT });
                 tryExecuteAction(props.onTourExit);
             }
@@ -431,6 +447,11 @@ function OnboardingWidget(props) {
 
     const combinedClassName = classNames(WIDGET_CLASS, props.class);
     const showProgress = props.showProgress; // Now a string enum: "none" | "dots" | "fraction"
+    const isLoading = props.runTrigger?.status === "loading" || props.steps?.status === "loading";
+    if (isLoading) {
+        return null; // Return nothing while Mendix is actively fetching data
+    }
+
     if (!joyrideSteps.length) {
         return <div className={combinedClassName} style={containerStyle} tabIndex={props.tabIndex} />;
     }
