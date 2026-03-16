@@ -390,12 +390,12 @@ function OnboardingWidget(props) {
             if (shouldStop) {
                 dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
             }
-            if (status === STATUS.FINISHED && !actionReportedRef.current.finish) {
+            if (status === STATUS.FINISHED && action !== ACTIONS.CLOSE && !actionReportedRef.current.finish) {
                 actionReportedRef.current.finish = true; // Lock immediately
                 dispatch({ type: TOUR_ACTIONS.REPORT_FINISH });
                 tryExecuteAction(props.onTourFinish);
             }
-            if (exitRequested && !actionReportedRef.current.exit && status !== STATUS.FINISHED) {
+            if (exitRequested && !actionReportedRef.current.exit) {
                 actionReportedRef.current.exit = true; // Lock immediately
                 dispatch({ type: TOUR_ACTIONS.REPORT_EXIT });
                 tryExecuteAction(props.onTourExit);
