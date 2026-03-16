@@ -25,12 +25,13 @@ export const JoyrideComponent = ({
         joyrideProps => (
             <CustomTooltip
                 {...joyrideProps}
+                locale={locale}
                 totalStepCount={totalStepCount}
                 stepOffset={stepOffset}
                 progressMode={progressMode}
             />
         ),
-        [totalStepCount, stepOffset, progressMode]
+        [locale, totalStepCount, stepOffset, progressMode]
     );
 
     return (

@@ -4,6 +4,7 @@ import { ACTIONS, STATUS } from "react-joyride";
 
 import "./ui/OnboardingWidget.scss";
 import { JoyrideComponent } from "./components/OnboardingWidgetComponent";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const WIDGET_CLASS = "onboarding-widget";
 const TOOLTIP_CLASS = "onboarding-widget-tooltip";
@@ -298,30 +299,20 @@ function OnboardingWidget(props) {
 
     const actionReportedRef = useRef({ finish: false, exit: false });
 
-    useEffect(() => {
-        console.log(`[OnboardingWidget] State update -> triggerStatus: ${props.runTrigger?.status}, triggerValue: ${triggerValue}, stepsReady: ${stepsReady}, tourState:`, tourState);
-    }, [props.runTrigger?.status, triggerValue, stepsReady, tourState]);
-
     // Handle trigger-based tour start/stop
     useEffect(() => {
-        console.log(`[OnboardingWidget] Evaluating trigger -> current: ${triggerValue}, prev: ${tourState.prevTrigger}`);
         if (triggerValue === undefined) {
-            console.log(`[OnboardingWidget] Trigger is undefined. Waiting.`);
             return;
         }
         if (triggerValue && !tourState.prevTrigger) {
-            console.log(`[OnboardingWidget] Trigger became true.`);
             actionReportedRef.current = { finish: false, exit: false }; // Reset ref for new tour run
             // Trigger changed from false to true - start tour
             if (stepsReady) {
-                console.log(`[OnboardingWidget] Steps are ready, starting tour.`);
                 dispatch({ type: TOUR_ACTIONS.START_TOUR });
             } else {
-                console.log(`[OnboardingWidget] Steps NOT ready yet, setting pending start.`);
                 dispatch({ type: TOUR_ACTIONS.SET_PENDING_START });
             }
         } else if (!triggerValue && tourState.prevTrigger) {
-            console.log(`[OnboardingWidget] Trigger became false, stopping tour.`);
             // Trigger changed from true to false - stop tour
             dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
             dispatch({ type: TOUR_ACTIONS.RESET_REPORTS });
@@ -334,7 +325,6 @@ function OnboardingWidget(props) {
     useEffect(() => {
         if (triggerValue === undefined) {
             if (stepsReady && !tourState.autoStarted) {
-                console.log(`[OnboardingWidget] Auto-starting tour because no trigger value and steps are ready.`);
                 dispatch({ type: TOUR_ACTIONS.MARK_AUTO_STARTED });
                 dispatch({ type: TOUR_ACTIONS.START_TOUR });
             } else if (!stepsReady) {
@@ -348,12 +338,10 @@ function OnboardingWidget(props) {
     // Handle pending start and steps readiness
     useEffect(() => {
         if (stepsReady && tourState.pendingStart) {
-            console.log(`[OnboardingWidget] Steps are now ready, starting pending tour.`);
             dispatch({ type: TOUR_ACTIONS.START_TOUR });
         }
 
         if (!stepsReady && tourState.run) {
-            console.log(`[OnboardingWidget] Steps are no longer ready, stopping tour.`);
             dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
         }
     }, [stepsReady, tourState.pendingStart, tourState.run]);
@@ -400,18 +388,15 @@ function OnboardingWidget(props) {
             const exitRequested = status === STATUS.SKIPPED || action === ACTIONS.CLOSE;
             const shouldStop = type === "tour:end" || status === STATUS.FINISHED || exitRequested;
             if (shouldStop) {
-                console.log(`[OnboardingWidget] Joyride requested stop. type: ${type}, status: ${status}, action: ${action}`);
                 dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
             }
             if (status === STATUS.FINISHED && !actionReportedRef.current.finish) {
                 actionReportedRef.current.finish = true; // Lock immediately
-                console.log(`[OnboardingWidget] Tour finished, triggering onTourFinish action.`);
                 dispatch({ type: TOUR_ACTIONS.REPORT_FINISH });
                 tryExecuteAction(props.onTourFinish);
             }
             if (exitRequested && !actionReportedRef.current.exit && status !== STATUS.FINISHED) {
                 actionReportedRef.current.exit = true; // Lock immediately
-                console.log(`[OnboardingWidget] Tour exited early, triggering onTourExit action.`);
                 dispatch({ type: TOUR_ACTIONS.REPORT_EXIT });
                 tryExecuteAction(props.onTourExit);
             }
@@ -468,22 +453,24 @@ function OnboardingWidget(props) {
     return (
         <div className={combinedClassName} style={containerStyle} tabIndex={props.tabIndex}>
             {tourState.run && (
-                <JoyrideComponent
-                    run={true}
-                    steps={joyrideSteps}
-                    showProgress={false} // CustomTooltip handles all progress display
-                    callback={handleJoyride}
-                    styles={finalStyles}
-                    locale={locale}
-                    continuous
-                    showSkipButton={false}
-                    showBackButton={Boolean(BackButtonText)}
-                    spotlightClicks={false}
-                    disableOverlayClose={true}
-                    totalStepCount={totalStepCount?.value != null ? Number(totalStepCount.value) : null}
-                    stepOffset={stepOffset?.value != null ? Number(stepOffset.value) : 0}
-                    progressMode={(progressMode?.value ?? "local").toLowerCase()}
-                />
+                <ErrorBoundary>
+                    <JoyrideComponent
+                        run={true}
+                        steps={joyrideSteps}
+                        showProgress={false} // CustomTooltip handles all progress display
+                        callback={handleJoyride}
+                        styles={finalStyles}
+                        locale={locale}
+                        continuous
+                        showSkipButton={false}
+                        showBackButton={Boolean(BackButtonText)}
+                        spotlightClicks={false}
+                        disableOverlayClose={true}
+                        totalStepCount={totalStepCount?.value != null ? Number(totalStepCount.value) : null}
+                        stepOffset={stepOffset?.value != null ? Number(stepOffset.value) : 0}
+                        progressMode={(progressMode?.value ?? "local").toLowerCase()}
+                    />
+                </ErrorBoundary>
             )}
         </div>
     );

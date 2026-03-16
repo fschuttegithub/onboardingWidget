@@ -76,6 +76,7 @@ export const CustomTooltip = ({
     primaryProps,
     tooltipProps,
     isLastStep,
+    locale,
     totalStepCount,
     stepOffset,
     progressMode
@@ -91,7 +92,7 @@ export const CustomTooltip = ({
     const displayIndex = progressMode === "global" ? resolvedOffset + index : index;
     const displayTotal = progressMode === "global" ? resolvedTotal : size;
 
-    const primaryTitle = primaryProps.title || (isGloballyLastStep ? "Finish" : "Next");
+    const primaryTitle = isGloballyLastStep ? (locale?.last || "Finish") : (locale?.next || "Next");
 
     const dialogRef = useRef(null);
     useEffect(() => {
