@@ -1,4 +1,4 @@
-import { Component, createElement } from "react";
+import { Component } from "react";
 
 export class ErrorBoundary extends Component {
     constructor(props) {

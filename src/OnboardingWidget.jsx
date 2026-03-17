@@ -107,12 +107,8 @@ const TOUR_ACTIONS = {
     START_TOUR: "START_TOUR",
     STOP_TOUR: "STOP_TOUR",
     SET_PENDING_START: "SET_PENDING_START",
-    CLEAR_PENDING_START: "CLEAR_PENDING_START",
     MARK_AUTO_STARTED: "MARK_AUTO_STARTED",
     RESET_AUTO_STARTED: "RESET_AUTO_STARTED",
-    REPORT_FINISH: "REPORT_FINISH",
-    REPORT_EXIT: "REPORT_EXIT",
-    RESET_REPORTS: "RESET_REPORTS",
     UPDATE_PREV_TRIGGER: "UPDATE_PREV_TRIGGER"
 };
 
@@ -122,9 +118,7 @@ const tourReducer = (state, action) => {
             return {
                 ...state,
                 run: true,
-                pendingStart: false,
-                hasReportedFinish: false,
-                hasReportedExit: false
+                pendingStart: false
             };
         case TOUR_ACTIONS.STOP_TOUR:
             return {
@@ -137,11 +131,6 @@ const tourReducer = (state, action) => {
                 ...state,
                 pendingStart: true
             };
-        case TOUR_ACTIONS.CLEAR_PENDING_START:
-            return {
-                ...state,
-                pendingStart: false
-            };
         case TOUR_ACTIONS.MARK_AUTO_STARTED:
             return {
                 ...state,
@@ -151,22 +140,6 @@ const tourReducer = (state, action) => {
             return {
                 ...state,
                 autoStarted: false
-            };
-        case TOUR_ACTIONS.REPORT_FINISH:
-            return {
-                ...state,
-                hasReportedFinish: true
-            };
-        case TOUR_ACTIONS.REPORT_EXIT:
-            return {
-                ...state,
-                hasReportedExit: true
-            };
-        case TOUR_ACTIONS.RESET_REPORTS:
-            return {
-                ...state,
-                hasReportedFinish: false,
-                hasReportedExit: false
             };
         case TOUR_ACTIONS.UPDATE_PREV_TRIGGER:
             return {
@@ -230,8 +203,7 @@ function OnboardingWidget(props) {
             if (type === "tooltip") {
                 popperInstanceRef.current = popper?.instance ?? null;
                 requestReposition();
-            }
-            if (popper?.instance && typeof popper.instance.update === "function") {
+            } else if (popper?.instance && typeof popper.instance.update === "function") {
                 popper.instance.update();
             }
         },
@@ -278,8 +250,6 @@ function OnboardingWidget(props) {
         run: false,
         pendingStart: false,
         autoStarted: false,
-        hasReportedFinish: false,
-        hasReportedExit: false,
         prevTrigger: false
     });
 
@@ -312,7 +282,6 @@ function OnboardingWidget(props) {
         } else if (!triggerValue && tourState.prevTrigger) {
             // Trigger changed from true to false - stop tour
             dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
-            dispatch({ type: TOUR_ACTIONS.RESET_REPORTS });
         }
 
         dispatch({ type: TOUR_ACTIONS.UPDATE_PREV_TRIGGER, payload: triggerValue });
@@ -389,16 +358,14 @@ function OnboardingWidget(props) {
             }
             if (status === STATUS.FINISHED && action !== ACTIONS.CLOSE && !actionReportedRef.current.finish) {
                 actionReportedRef.current.finish = true; // Lock immediately
-                dispatch({ type: TOUR_ACTIONS.REPORT_FINISH });
                 tryExecuteAction(props.onTourFinish);
             }
             if (exitRequested && !actionReportedRef.current.exit) {
                 actionReportedRef.current.exit = true; // Lock immediately
-                dispatch({ type: TOUR_ACTIONS.REPORT_EXIT });
                 tryExecuteAction(props.onTourExit);
             }
         },
-        [props.onTourExit, props.onTourFinish, props.runTrigger, tourState.hasReportedFinish, tourState.hasReportedExit]
+        [props.onTourExit, props.onTourFinish]
     );
 
     // Merge styles: default joyride options < user JSON override

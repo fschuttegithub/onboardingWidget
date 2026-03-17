@@ -86,13 +86,12 @@ export const CustomTooltip = ({
 
     const resolvedTotal = totalStepCount != null ? totalStepCount : size;
     const resolvedOffset = stepOffset ?? 0;
-    const isGloballyLastStep =
-        totalStepCount != null ? resolvedOffset + index + 1 === resolvedTotal : isLastStep;
+    const isGloballyLastStep = totalStepCount != null ? resolvedOffset + index + 1 === resolvedTotal : isLastStep;
 
     const displayIndex = progressMode === "global" ? resolvedOffset + index : index;
     const displayTotal = progressMode === "global" ? resolvedTotal : size;
 
-    const primaryTitle = isGloballyLastStep ? (locale?.last || "Finish") : (locale?.next || "Next");
+    const primaryTitle = isGloballyLastStep ? locale?.last || "Finish" : locale?.next || "Next";
 
     const dialogRef = useRef(null);
     useEffect(() => {
