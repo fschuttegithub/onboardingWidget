@@ -16,7 +16,7 @@
         <propertyGroup caption="Tour">
             <property key="runTrigger" type="attribute" required="false">
                 <caption>Run trigger</caption>
-                <description>Boolean attribute. When true, the tour starts. Automatically reset to false when the tour ends.</description>
+                <description>Boolean attribute. When set to true, the tour starts. Set back to false via a nanoflow to allow re-triggering.</description>
                 <attributeTypes>
                     <attributeType name="Boolean" />
                 </attributeTypes>
@@ -37,7 +37,7 @@
             </property>
             <property key="stepTarget" type="attribute" dataSource="steps" required="true">
                 <caption>Target selector</caption>
-                <description>CSS selector for the target element (e.g., .my-class or #my-id).</description>
+                <description>CSS selector or bare identifier for the target element. A bare word like "myId" matches both #myId and .myId.</description>
                 <attributeTypes>
                     <attributeType name="String" />
                 </attributeTypes>
@@ -50,62 +50,44 @@
         <propertyGroup caption="Progress">
             <property key="showProgress" type="attribute" required="false">
                 <caption>Progress indicator</caption>
-                <description>Bind to Enum_ProgressIndicator: None, Dots, or Step_Count (e.g. 1/3). Defaults to Dots.</description>
+                <description>Bind to an enum with values: None, Dots, or Step_Count. Controls the progress indicator style shown in the tooltip.</description>
                 <attributeTypes>
                     <attributeType name="Enum"/>
                 </attributeTypes>
             </property>
             <property key="progressMode" type="attribute" required="false">
                 <caption>Progress scope</caption>
-                <description>Bind to Enum_DisplayMode: Local (count steps on this page) or Global (count across all pages). Defaults to Local.</description>
+                <description>Bind to an enum: Local (steps on this page only) or Global (steps across all pages, requires Total step count and Step offset).</description>
                 <attributeTypes>
                     <attributeType name="Enum"/>
                 </attributeTypes>
             </property>
             <property key="totalStepCount" type="attribute" required="false">
                 <caption>Total step count</caption>
-                <description>Total steps across all pages. Required when Progress scope is Global.</description>
+                <description>Total number of steps across all pages. Only used when Progress scope is set to Global.</description>
                 <attributeTypes>
                     <attributeType name="Integer"/>
                 </attributeTypes>
             </property>
             <property key="stepOffset" type="attribute" required="false">
                 <caption>Step offset</caption>
-                <description>Number of steps completed on previous pages (0 for the first page). Required when Progress scope is Global.</description>
+                <description>Steps completed on previous pages (use 0 for the first page). Only used when Progress scope is set to Global.</description>
                 <attributeTypes>
                     <attributeType name="Integer"/>
                 </attributeTypes>
             </property>
         </propertyGroup>
         <propertyGroup caption="Appearance">
-            <propertyGroup caption="Colors &amp; Shape">
-                <property key="primaryColor" type="string" defaultValue="#2540AF" required="false">
-                    <caption>Primary color</caption>
-                    <description>Main color used for buttons and active elements.</description>
-                </property>
-                <property key="backgroundColor" type="string" defaultValue="#ffffff" required="false">
-                    <caption>Background color</caption>
-                    <description>Background color of the tooltip card.</description>
-                </property>
-                <property key="textColor" type="string" defaultValue="#333333" required="false">
-                    <caption>Text color</caption>
-                    <description>Color of the text inside the tooltip.</description>
-                </property>
-                <property key="borderRadius" type="integer" defaultValue="8" required="true">
-                    <caption>Border radius</caption>
-                    <description>Corner radius of the tooltip card (in pixels).</description>
-                </property>
-            </propertyGroup>
             <propertyGroup caption="Button Labels">
-                <property key="BackButtonText" type="string" defaultValue="Back" required="true">
+                <property key="backButtonText" type="string" defaultValue="Back" required="true">
                     <caption>Back</caption>
                     <description>Label for the Back button.</description>
                 </property>
-                <property key="NextButtonText" type="string" defaultValue="Next" required="true">
+                <property key="nextButtonText" type="string" defaultValue="Next" required="true">
                     <caption>Next</caption>
                     <description>Label for the Next button.</description>
                 </property>
-                <property key="FinishButtonText" type="string" defaultValue="Finish" required="true">
+                <property key="finishButtonText" type="string" defaultValue="Finish" required="true">
                     <caption>Finish</caption>
                     <description>Label for the Finish button.</description>
                 </property>
@@ -113,7 +95,7 @@
             <propertyGroup caption="Advanced">
                 <property key="stylesJson" type="textTemplate" required="false">
                     <caption>Custom styles (JSON)</caption>
-                    <description>Optional JSON to override react-joyride styles. See https://docs.react-joyride.com/styling for structure.</description>
+                    <description>Optional JSON object to override react-joyride styles (see react-joyride docs → Styling).</description>
                 </property>
             </propertyGroup>
         </propertyGroup>

@@ -1,0 +1,68 @@
+// ============================================================
+// Onboarding Widget – Design Tokens
+// ============================================================
+// Copy this file into your Mendix app's themesource folder and
+// override any variable to restyle the widget globally.
+//
+// Variables marked with a var(--atlas-token, fallback) will
+// automatically adopt your Atlas brand when that token is set.
+// All other variables use a hardcoded default.
+// ============================================================
+
+:root {
+    // ── Core colors ──────────────────────────────────────────
+    // Inherits Atlas brand color when available
+    --ow-primary:               var(--color-brand-primary, #2540af);
+
+    // Inherits Atlas background when available
+    --ow-bg:                    var(--color-background-primary, #ffffff);
+
+    // Inherits Atlas text color when available
+    --ow-text:                  var(--color-text-primary, #333333);
+
+    // Secondary / muted text: fraction indicator, back button, close icon
+    --ow-text-muted:            #6b7280;
+
+    // Primary button label color
+    --ow-button-primary-text:   #ffffff;
+
+    // ── Shape ────────────────────────────────────────────────
+    // Tooltip card + spotlight corner radius
+    --ow-radius:                var(--border-radius-default, 8px);
+
+    // Button corner radius (Next / Back / Finish)
+    --ow-button-radius:         8px;
+
+    // ── Overlay & spotlight ──────────────────────────────────
+    // Semi-transparent backdrop behind the spotlight
+    --ow-overlay-color:         rgba(0, 0, 0, 0.6);
+
+    // ── Tooltip dimensions & spacing ─────────────────────────
+    --ow-tooltip-min-width:     320px;
+    --ow-tooltip-max-width:     420px;
+    // Right side is wider to leave room for the close button
+    --ow-tooltip-padding:       24px 48px 24px 24px;
+
+    // ── Tooltip decoration ───────────────────────────────────
+    --ow-tooltip-border-color:  rgba(0, 0, 0, 0.05);
+    --ow-tooltip-shadow:        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                                0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    // ── Button sizing ────────────────────────────────────────
+    --ow-button-height:         36px;
+
+    // ── Typography ───────────────────────────────────────────
+    --ow-font-size-body:        15px;
+    --ow-font-size-button:      14px;
+    --ow-font-size-fraction:    13px;
+
+    // ── Progress dots ────────────────────────────────────────
+    // Dot diameter (active dot uses --ow-primary)
+    --ow-dot-size:              8px;
+    --ow-dot-inactive:          #e5e7eb;
+
+    // ── Animation ────────────────────────────────────────────
+    // Entry animation duration for the tooltip card (set to 0 to disable)
+    --ow-animation-duration:    0.3s;
+}

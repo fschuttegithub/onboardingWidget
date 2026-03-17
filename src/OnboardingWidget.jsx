@@ -183,14 +183,10 @@ function OnboardingWidget(props) {
         steps,
         stepTarget,
         stylesJson,
-        BackButtonText,
-        NextButtonText,
-        FinishButtonText,
+        backButtonText,
+        nextButtonText,
+        finishButtonText,
         stepWidget,
-        primaryColor,
-        backgroundColor,
-        textColor,
-        borderRadius,
         totalStepCount,
         stepOffset,
         progressMode
@@ -273,16 +269,6 @@ function OnboardingWidget(props) {
         [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps, props.showProgress?.value]
     );
 
-    useEffect(() => {
-        if (typeof document !== "undefined" && joyrideSteps.length > 0) {
-            joyrideSteps.forEach(step => {
-                if (step.target && !document.querySelector(step.target)) {
-                    console.warn(`[OnboardingWidget] Target not found: "${step.target}"`);
-                }
-            });
-        }
-    }, [joyrideSteps]);
-
     const stepsReady = joyrideSteps.length > 0;
 
     const triggerValue =
@@ -298,6 +284,17 @@ function OnboardingWidget(props) {
     });
 
     const actionReportedRef = useRef({ finish: false, exit: false });
+
+    useEffect(() => {
+        if (!tourState.run) return;
+        if (typeof document !== "undefined" && joyrideSteps.length > 0) {
+            joyrideSteps.forEach(step => {
+                if (step.target && !document.querySelector(step.target)) {
+                    console.warn(`[OnboardingWidget] Target not found: "${step.target}"`);
+                }
+            });
+        }
+    }, [joyrideSteps, tourState.run]);
 
     // Handle trigger-based tour start/stop
     useEffect(() => {
@@ -369,13 +366,13 @@ function OnboardingWidget(props) {
 
     const locale = useMemo(
         () => ({
-            back: BackButtonText,
-            close: FinishButtonText,
-            last: FinishButtonText,
-            next: NextButtonText,
-            skip: FinishButtonText
+            back: backButtonText,
+            close: finishButtonText,
+            last: finishButtonText,
+            next: nextButtonText,
+            skip: finishButtonText
         }),
-        [BackButtonText, NextButtonText, FinishButtonText]
+        [backButtonText, nextButtonText, finishButtonText]
     );
 
     const handleJoyride = useCallback(
@@ -408,12 +405,12 @@ function OnboardingWidget(props) {
     const defaultJoyrideStyles = useMemo(
         () => ({
             options: {
-                primaryColor: primaryColor || "#2540AF",
-                textColor: textColor || "#333333",
+                primaryColor:
+                    getComputedStyle(document.documentElement).getPropertyValue("--ow-primary").trim() || "#2540AF",
                 zIndex: 10000
             }
         }),
-        [primaryColor, textColor]
+        []
     );
 
     const finalStyles = useMemo(() => {
@@ -431,13 +428,7 @@ function OnboardingWidget(props) {
         };
     }, [defaultJoyrideStyles, stylesOverride]);
 
-    const containerStyle = {
-        ...props.style,
-        "--ow-primary": primaryColor || "#2540AF",
-        "--ow-bg": backgroundColor || "#ffffff",
-        "--ow-text": textColor || "#333333",
-        "--ow-radius": borderRadius != null ? `${borderRadius}px` : "8px"
-    };
+    const containerStyle = props.style ?? {};
 
     const combinedClassName = classNames(WIDGET_CLASS, props.class);
 
@@ -463,7 +454,7 @@ function OnboardingWidget(props) {
                         locale={locale}
                         continuous
                         showSkipButton={false}
-                        showBackButton={Boolean(BackButtonText)}
+                        showBackButton={Boolean(backButtonText)}
                         spotlightClicks={false}
                         disableOverlayClose={true}
                         totalStepCount={totalStepCount?.value != null ? Number(totalStepCount.value) : null}

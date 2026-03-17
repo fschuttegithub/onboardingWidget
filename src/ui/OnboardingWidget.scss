@@ -14,12 +14,12 @@
 
 // 1. Overlay & Spotlight (Global overrides for React Joyride)
 .react-joyride__overlay {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--ow-overlay-color, rgba(0, 0, 0, 0.6));
 }
 
 .react-joyride__spotlight {
-    border-radius: 8px;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    border-radius: var(--ow-radius, 8px);
+    box-shadow: 0 0 0 9999px var(--ow-overlay-color, rgba(0, 0, 0, 0.6));
 }
 
 // 2. Arrow styling
@@ -33,21 +33,24 @@
 // 3. Custom Tooltip Component Styling
 .onboarding-widget-tooltip.custom-tooltip {
     background-color: var(--ow-bg, #ffffff);
-    border: 1px solid rgba(0, 0, 0, 0.05); // Added subtle border
-    border-radius: var(--ow-radius, 12px); // Slightly increased radius
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06),
-        0 20px 25px -5px rgba(0, 0, 0, 0.1); // Richer shadow
+    border: 1px solid var(--ow-tooltip-border-color, rgba(0, 0, 0, 0.05));
+    border-radius: var(--ow-radius, 8px);
+    box-shadow: var(--ow-tooltip-shadow,
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+        0 20px 25px -5px rgba(0, 0, 0, 0.1)
+    );
     color: var(--ow-text, #333333);
     font-family: inherit;
-    max-width: 420px;
-    min-width: 320px;
-    padding: 24px 48px 24px 24px;
+    max-width: var(--ow-tooltip-max-width, 420px);
+    min-width: var(--ow-tooltip-min-width, 320px);
+    padding: var(--ow-tooltip-padding, 24px 48px 24px 24px);
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 16px;
     box-sizing: border-box;
-    animation: tooltip-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; // Added animation
+    animation: tooltip-slide-up var(--ow-animation-duration, 0.3s) cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
     // Close Button
     .custom-tooltip__close {
@@ -56,7 +59,7 @@
         right: 12px;
         background: transparent;
         border: none;
-        color: #9ca3af; // Softer gray
+        color: var(--ow-text-muted, #9ca3af);
         cursor: pointer;
         padding: 8px;
         transition: all 0.2s;
@@ -64,7 +67,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%; // Circular hover
+        border-radius: 50%;
         width: 32px;
         height: 32px;
 
@@ -92,7 +95,7 @@
 
     // Body Content
     .custom-tooltip__body {
-        font-size: 15px; // Slightly larger
+        font-size: var(--ow-font-size-body, 15px);
         line-height: 1.6;
         margin-bottom: 8px;
         flex-grow: 1;
@@ -108,7 +111,7 @@
         align-items: center;
         justify-content: space-between;
         margin-top: auto;
-        padding-top: 12px; // More breathing room
+        padding-top: 12px;
         height: 40px;
     }
 
@@ -133,10 +136,10 @@
     }
 
     .custom-tooltip__dot {
-        width: 8px;
-        height: 8px;
+        width: var(--ow-dot-size, 8px);
+        height: var(--ow-dot-size, 8px);
         border-radius: 50%;
-        background-color: #e5e7eb;
+        background-color: var(--ow-dot-inactive, #e5e7eb);
         transition: all 0.3s ease;
 
         &--active {
@@ -146,8 +149,8 @@
     }
 
     .custom-tooltip__fraction {
-        font-size: 13px;
-        color: #6b7280;
+        font-size: var(--ow-font-size-fraction, 13px);
+        color: var(--ow-text-muted, #6b7280);
         font-weight: 500;
         font-variant-numeric: tabular-nums;
     }
@@ -155,17 +158,17 @@
     // Buttons
     .custom-tooltip__button {
         border: none;
-        border-radius: 8px;
+        border-radius: var(--ow-button-radius, 8px);
         cursor: pointer;
-        font-size: 14px;
+        font-size: var(--ow-font-size-button, 14px);
         font-weight: 600;
         padding: 8px 16px;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px; // Space for icons
-        height: 36px;
+        gap: 6px;
+        height: var(--ow-button-height, 36px);
         box-sizing: border-box;
 
         &:focus-visible {
@@ -180,8 +183,8 @@
         // Back Button (Ghost)
         &--back {
             background: transparent;
-            color: #6b7280;
-            padding-left: 8px; // Adjust for icon
+            color: var(--ow-text-muted, #6b7280);
+            padding-left: 8px;
             padding-right: 12px;
 
             &:hover {
@@ -193,13 +196,13 @@
         // Primary Button (Next/Finish)
         &--primary {
             background-color: var(--ow-primary, #2540af);
-            color: #ffffff;
+            color: var(--ow-button-primary-text, #ffffff);
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
             &:hover {
-                filter: brightness(1.1); // Brighten slightly instead of darken
+                filter: brightness(1.1);
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                transform: translateY(-1px); // Lift effect
+                transform: translateY(-1px);
             }
 
             &:active {
