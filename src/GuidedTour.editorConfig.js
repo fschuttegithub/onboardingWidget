@@ -104,5 +104,5 @@ export function check(values) {
 //  * @returns {string}
 //  */
 // export function getCustomCaption(values, platform) {
-//     return "OnboardingWidget";
+//     return "GuidedTour";
 // }

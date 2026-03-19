@@ -1,6 +1,6 @@
-# Guided Tour – Multi-Page Onboarding
+# Guided Tour – Multi-Page Tour
 
-A Mendix pluggable widget that guides users through your application with step-by-step tooltip tours. Supports single-page and multi-page onboarding flows, fully driven by your Mendix data model.
+A Mendix pluggable widget that guides users through your application with step-by-step tooltip tours. Supports single-page and multi-page guided tour flows, fully driven by your Mendix data model.
 
 Built on [react-joyride](https://docs.react-joyride.com/).
 
@@ -134,7 +134,7 @@ Controls whether the step counter counts steps on the current page only, or glob
 
 ### Multi-page tour
 
-Use this when your onboarding spans multiple Mendix pages and you want a continuous step counter (e.g. "Step 3/10").
+Use this when your tour spans multiple Mendix pages and you want a continuous step counter (e.g. "Step 3/10").
 
 1. Add `TotalStepCount` (Integer) and `StepOffset` (Integer) attributes to your context entity.
 2. Set `TotalStepCount` to the total number of steps across all pages (e.g. `10`).

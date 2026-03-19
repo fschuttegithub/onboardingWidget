@@ -28,7 +28,7 @@ The Mendix app is expected at `http://localhost:8080` and the dev server runs on
 
 ## Architecture
 
-This is a **Mendix Pluggable Widget** that wraps [react-joyride](https://docs.react-joyride.com/) to provide guided onboarding tours inside Mendix applications.
+This is a **Mendix Pluggable Widget** that wraps [react-joyride](https://docs.react-joyride.com/) to provide guided tours inside Mendix applications.
 
 ### Key files
 
@@ -110,9 +110,9 @@ Built from button-text props: `back → backButtonText`, `next → nextButtonTex
 
 ## Mendix Module
 
-This widget ships as part of the **Onboarding Module**. See `MODULE.md` for:
-- Domain model (Onboarding, Page, Step, OnboardingAccount, OnboardingHelper)
-- Microflow architecture (DS_OnboardingHelper, ACT_StartTour, SUB_ProgressToNextPage, ACT_TourExit)
-- Snippet placement guide (SNP_Onboarding_Page)
+This widget ships as part of the **Guided Tour Module**. See `MODULE.md` for:
+- Domain model (GuidedTour, Page, Step, GuidedTourAccount, GuidedTourHelper)
+- Microflow architecture (DS_GuidedTourHelper, ACT_StartTour, SUB_GuidedTourAccount_ProgressToNextPage, ACT_TourExit)
+- Snippet placement guide (SNP_GuidedTour_Page)
 - PageType enum pattern (how pages are identified across the tour)
 - Multi-page progress offset (CurrentOffset ↔ stepOffset)
