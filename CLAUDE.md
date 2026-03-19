@@ -34,13 +34,13 @@ This is a **Mendix Pluggable Widget** that wraps [react-joyride](https://docs.re
 
 | File | Purpose |
 |------|---------|
-| `src/OnboardingWidget.xml` | Widget property schema — defines all configurable properties visible in Mendix Studio Pro |
-| `src/OnboardingWidget.jsx` | Main widget entry point; handles all Mendix prop wiring, tour state machine, and joyride step construction |
-| `src/components/OnboardingWidgetComponent.jsx` | Thin wrapper around `<Joyride>` that injects the custom tooltip |
+| `src/GuidedTour.xml` | Widget property schema — defines all configurable properties visible in Mendix Studio Pro |
+| `src/GuidedTour.jsx` | Main widget entry point; handles all Mendix prop wiring, tour state machine, and joyride step construction |
+| `src/components/GuidedTourComponent.jsx` | Thin wrapper around `<Joyride>` that injects the custom tooltip |
 | `src/components/CustomTooltip.jsx` | Fully custom tooltip UI (header, body, footer with nav dots/fraction, back/next/finish buttons, SVG icons) |
 | `src/components/ErrorBoundary.jsx` | Class component; catches render errors inside the tour, logs them, and returns null to prevent page crashes |
-| `src/ui/OnboardingWidget.scss` | SCSS styles using CSS custom properties (`--ow-primary`, `--ow-bg`, `--ow-text`, `--ow-radius`) |
-| `src/OnboardingWidget.editorConfig.js` | Studio Pro editor hooks — only `getProperties` is active; `check`, `getPreview`, and `getCustomCaption` are commented stubs |
+| `src/ui/GuidedTour.scss` | SCSS styles using CSS custom properties (`--ow-primary`, `--ow-bg`, `--ow-text`, `--ow-radius`) |
+| `src/GuidedTour.editorConfig.js` | Studio Pro editor hooks — only `getProperties` is active; `check`, `getPreview`, and `getCustomCaption` are commented stubs |
 | `src/package.xml` | Mendix package metadata |
 | `themesource/_variables.scss` | Module-level design tokens — `--ow-*` CSS custom properties with Atlas fallbacks; included automatically when the module is installed in a Mendix app |
 
@@ -57,7 +57,7 @@ This is a **Mendix Pluggable Widget** that wraps [react-joyride](https://docs.re
 
    An `actionReportedRef` (`{ finish, exit }`) provides an extra deduplication lock to prevent `onTourFinish`/`onTourExit` from firing twice before React re-renders.
 
-4. **Styling**: `--ow-*` CSS custom properties are defined in `themesource/_variables.scss` (module-level, auto-included). They inherit from Atlas Design System tokens where available, with hardcoded fallbacks. Full token list: `--ow-primary`, `--ow-bg`, `--ow-text`, `--ow-text-muted`, `--ow-button-primary-text`, `--ow-radius`, `--ow-button-radius`, `--ow-overlay-color`, `--ow-tooltip-min-width`, `--ow-tooltip-max-width`, `--ow-tooltip-padding`, `--ow-tooltip-border-color`, `--ow-tooltip-shadow`, `--ow-button-height`, `--ow-font-size-body`, `--ow-font-size-button`, `--ow-font-size-fraction`, `--ow-dot-size`, `--ow-dot-inactive`, `--ow-animation-duration`. `OnboardingWidget.jsx` reads `--ow-primary` via `getComputedStyle` to pass to react-joyride's `styles.options.primaryColor`. A `stylesJson` text template can override any react-joyride `styles` object (shallow-merged over the default options).
+4. **Styling**: `--ow-*` CSS custom properties are defined in `themesource/_variables.scss` (module-level, auto-included). They inherit from Atlas Design System tokens where available, with hardcoded fallbacks. Full token list: `--ow-primary`, `--ow-bg`, `--ow-text`, `--ow-text-muted`, `--ow-button-primary-text`, `--ow-radius`, `--ow-button-radius`, `--ow-overlay-color`, `--ow-tooltip-min-width`, `--ow-tooltip-max-width`, `--ow-tooltip-padding`, `--ow-tooltip-border-color`, `--ow-tooltip-shadow`, `--ow-button-height`, `--ow-font-size-body`, `--ow-font-size-button`, `--ow-font-size-fraction`, `--ow-dot-size`, `--ow-dot-inactive`, `--ow-animation-duration`. `GuidedTour.jsx` reads `--ow-primary` via `getComputedStyle` to pass to react-joyride's `styles.options.primaryColor`. A `stylesJson` text template can override any react-joyride `styles` object (shallow-merged over the default options).
 
 5. **Progress indicator**: `showProgress` is bound to a Mendix enum with values `None`, `Dots`, `Step_Count`. `mapProgressIndicator` normalizes these to internal strings (`None → "none"`, `Dots → "dots"`, `Step_Count → "fraction"`), defaulting to `"dots"` if the value is absent. Joyride's native `showProgress` prop is always `false`; all progress rendering is handled by `CustomTooltip`. `progressMode` (Mendix enum: `Local` | `Global`) controls scope:
    - **Local**: `displayIndex = index`, `displayTotal = size` (steps on this widget instance).
@@ -100,7 +100,7 @@ Built from button-text props: `back → backButtonText`, `next → nextButtonTex
 
 ### Mendix widget conventions
 
-- The widget id is `kobeon.onboardingwidget.OnboardingWidget` (package path: `kobeon`).
+- The widget id is `kobeon.guidedtour.GuidedTour` (package path: `kobeon`).
 - `needsEntityContext="true"` — the widget requires a Mendix entity context to resolve datasource and attribute properties.
 - `offlineCapable="true"` — can be placed on offline Mendix pages.
 - `supportedPlatform="Web"` — web only, not native mobile.

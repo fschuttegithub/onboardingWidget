@@ -11,7 +11,7 @@ export class ErrorBoundary extends Component {
     }
 
     componentDidCatch(error, info) {
-        console.error("[OnboardingWidget] Unhandled error in tour component:", error, info.componentStack);
+        console.error("[GuidedTour] Unhandled error in tour component:", error, info.componentStack);
     }
 
     render() {

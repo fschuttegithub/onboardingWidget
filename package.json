@@ -1,6 +1,6 @@
 {
-  "name": "onboardingwidget",
-  "widgetName": "OnboardingWidget",
+  "name": "guidedtour",
+  "widgetName": "GuidedTour",
   "version": "1.0.0",
   "description": "My widget description",
   "copyright": "© Mendix Technology BV 2022. All rights reserved.",

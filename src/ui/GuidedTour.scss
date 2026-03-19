@@ -1,4 +1,4 @@
-// Onboarding Widget styling - Professional and soft design
+// Guided Tour styling - Professional and soft design
 
 // Keyframes for entry animation
 @keyframes tooltip-slide-up {
@@ -31,7 +31,7 @@
 }
 
 // 3. Custom Tooltip Component Styling
-.onboarding-widget-tooltip.custom-tooltip {
+.guided-tour-tooltip.custom-tooltip {
     background-color: var(--ow-bg, #ffffff);
     border: 1px solid var(--ow-tooltip-border-color, rgba(0, 0, 0, 0.05));
     border-radius: var(--ow-radius, 8px);
@@ -101,7 +101,7 @@
         margin-bottom: 8px;
         flex-grow: 1;
 
-        .onboarding-widget__content {
+        .guided-tour__content {
             width: 100%;
         }
     }
@@ -214,7 +214,7 @@
     }
 }
 
-.onboarding-widget {
+.guided-tour {
     &__content {
         width: 100%;
     }

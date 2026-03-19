@@ -2,12 +2,12 @@ import { createElement, useCallback, useEffect, useMemo, useReducer, useRef, use
 
 import { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
-import "./ui/OnboardingWidget.scss";
-import { JoyrideComponent } from "./components/OnboardingWidgetComponent";
+import "./ui/GuidedTour.scss";
+import { JoyrideComponent } from "./components/GuidedTourComponent";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
-const WIDGET_CLASS = "onboarding-widget";
-const TOOLTIP_CLASS = "onboarding-widget-tooltip";
+const WIDGET_CLASS = "guided-tour";
+const TOOLTIP_CLASS = "guided-tour-tooltip";
 const SIMPLE_SELECTOR_PATTERN = /^[A-Za-z][\w-]*$/;
 
 const mapProgressIndicator = value => {
@@ -153,7 +153,7 @@ const tourReducer = (state, action) => {
     }
 };
 
-function OnboardingWidget(props) {
+function GuidedTour(props) {
     const {
         steps,
         stepTarget,
@@ -344,7 +344,7 @@ function OnboardingWidget(props) {
         if (typeof document !== "undefined" && joyrideSteps.length > 0) {
             joyrideSteps.forEach(step => {
                 if (step.target && !document.querySelector(step.target)) {
-                    console.warn(`[OnboardingWidget] Target not found: "${step.target}"`);
+                    console.warn(`[GuidedTour] Target not found: "${step.target}"`);
                 }
             });
         }
@@ -408,9 +408,9 @@ function OnboardingWidget(props) {
             if (parsed && typeof parsed === "object") {
                 return parsed;
             }
-            console.warn("[OnboardingWidget] Custom styles JSON must resolve to an object.");
+            console.warn("[GuidedTour] Custom styles JSON must resolve to an object.");
         } catch (error) {
-            console.warn("[OnboardingWidget] Unable to parse custom styles JSON.", error);
+            console.warn("[GuidedTour] Unable to parse custom styles JSON.", error);
         }
 
         return undefined;
@@ -583,4 +583,4 @@ function OnboardingWidget(props) {
     );
 }
 
-export default OnboardingWidget;
+export default GuidedTour;

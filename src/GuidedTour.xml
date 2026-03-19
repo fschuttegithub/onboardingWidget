@@ -2,14 +2,14 @@
 <widget
     xmlns="http://www.mendix.com/widget/1.0/"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    id="kobeon.onboardingwidget.OnboardingWidget"
+    id="kobeon.guidedtour.GuidedTour"
     pluginWidget="true"
     needsEntityContext="true"
     offlineCapable="true"
     supportedPlatform="Web"
     xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
 >
-    <name>Onboarding Widget</name>
+    <name>Guided Tour</name>
     <description>Guide users through your app with a step-by-step tour.</description>
     <icon />
     <properties>

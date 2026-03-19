@@ -108,7 +108,7 @@ export const CustomTooltip = ({
 
     return (
         <div
-            className="onboarding-widget-tooltip custom-tooltip"
+            className="guided-tour-tooltip custom-tooltip"
             {...tooltipProps}
             ref={dialogRef}
             role="dialog"
