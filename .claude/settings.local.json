@@ -6,7 +6,8 @@
       "Bash(ls:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:rosmur.github.io)",
-      "Bash(find /c/Users/FrankSchutte/Mendix/GuidedTourWidget-main/myPluggableWidgets/onboardingWidget -type f -name *onboarding* -o -name *Onboarding*)"
+      "Bash(find /c/Users/FrankSchutte/Mendix/GuidedTourWidget-main/myPluggableWidgets/onboardingWidget -type f -name *onboarding* -o -name *Onboarding*)",
+      "Bash(gh repo:*)"
     ]
   }
 }
