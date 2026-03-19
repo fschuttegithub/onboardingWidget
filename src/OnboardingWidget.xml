@@ -46,6 +46,13 @@
                 <caption>Step content</caption>
                 <description>Widgets to render inside the tooltip for each step.</description>
             </property>
+            <property key="advanceOnClick" type="attribute" dataSource="steps" required="false">
+                <caption>Advance on click</caption>
+                <description>When enabled, clicking the highlighted element automatically advances to the next step.</description>
+                <attributeTypes>
+                    <attributeType name="Boolean" />
+                </attributeTypes>
+            </property>
         </propertyGroup>
         <propertyGroup caption="Progress">
             <property key="showProgress" type="attribute" required="false">

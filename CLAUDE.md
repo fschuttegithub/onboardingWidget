@@ -107,3 +107,12 @@ Built from button-text props: `back → backButtonText`, `next → nextButtonTex
 - Button-text props (`backButtonText`, `nextButtonText`, `finishButtonText`) have `defaultValue` in XML so they are always present and never `undefined`.
 - Tooling is `@mendix/pluggable-widgets-tools` which provides webpack build, ESLint, and Prettier configs automatically.
 - The `prettier.config.js` and `.eslintrc.js` at the root extend the tools' defaults.
+
+## Mendix Module
+
+This widget ships as part of the **Onboarding Module**. See `MODULE.md` for:
+- Domain model (Onboarding, Page, Step, OnboardingAccount, OnboardingHelper)
+- Microflow architecture (DS_OnboardingHelper, ACT_StartTour, SUB_ProgressToNextPage, ACT_TourExit)
+- Snippet placement guide (SNP_Onboarding_Page)
+- PageType enum pattern (how pages are identified across the tour)
+- Multi-page progress offset (CurrentOffset ↔ stepOffset)

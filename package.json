@@ -28,7 +28,6 @@
     "@mendix/pluggable-widgets-tools": "^10.15.0"
   },
   "dependencies": {
-    "classnames": "^2.2.6",
     "react-joyride": "^2.6.0"
   },
   "resolutions": {

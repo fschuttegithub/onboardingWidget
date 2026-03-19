@@ -17,6 +17,8 @@ export const JoyrideComponent = ({
     showBackButton,
     spotlightClicks,
     disableOverlayClose,
+    stepIndex,
+    getHelpers,
     totalStepCount,
     stepOffset,
     progressMode
@@ -47,8 +49,10 @@ export const JoyrideComponent = ({
             continuous={continuous}
             showSkipButton={showSkipButton}
             showBackButton={showBackButton}
+            stepIndex={stepIndex}
             spotlightClicks={spotlightClicks}
             disableOverlayClose={disableOverlayClose}
+            getHelpers={getHelpers}
             tooltipComponent={TooltipComponent}
         />
     );

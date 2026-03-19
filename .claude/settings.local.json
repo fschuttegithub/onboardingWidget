@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "WebSearch",
+      "Bash(ls:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:rosmur.github.io)",
+      "Bash(find /c/Users/FrankSchutte/Mendix/GuidedTourWidget-main/myPluggableWidgets/onboardingWidget -type f -name *onboarding* -o -name *Onboarding*)"
     ]
   }
 }

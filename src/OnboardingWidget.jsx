@@ -1,6 +1,6 @@
-import { createElement, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
-import classNames from "classnames";
-import { ACTIONS, STATUS } from "react-joyride";
+import { createElement, useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+
+import { ACTIONS, EVENTS, STATUS } from "react-joyride";
 
 import "./ui/OnboardingWidget.scss";
 import { JoyrideComponent } from "./components/OnboardingWidgetComponent";
@@ -105,9 +105,9 @@ const tryExecuteAction = action => {
 
 const TOUR_ACTIONS = {
     START_TOUR: "START_TOUR",
+    START_TOUR_AUTO: "START_TOUR_AUTO",
     STOP_TOUR: "STOP_TOUR",
     SET_PENDING_START: "SET_PENDING_START",
-    MARK_AUTO_STARTED: "MARK_AUTO_STARTED",
     RESET_AUTO_STARTED: "RESET_AUTO_STARTED",
     UPDATE_PREV_TRIGGER: "UPDATE_PREV_TRIGGER"
 };
@@ -131,9 +131,11 @@ const tourReducer = (state, action) => {
                 ...state,
                 pendingStart: true
             };
-        case TOUR_ACTIONS.MARK_AUTO_STARTED:
+        case TOUR_ACTIONS.START_TOUR_AUTO:
             return {
                 ...state,
+                run: true,
+                pendingStart: false,
                 autoStarted: true
             };
         case TOUR_ACTIONS.RESET_AUTO_STARTED:
@@ -160,6 +162,7 @@ function OnboardingWidget(props) {
         nextButtonText,
         finishButtonText,
         stepWidget,
+        advanceOnClick,
         totalStepCount,
         stepOffset,
         progressMode
@@ -169,17 +172,17 @@ function OnboardingWidget(props) {
     const rawItems = stepsAvailable && Array.isArray(steps?.items) ? steps.items : undefined;
 
     const popperInstanceRef = useRef(null);
+    const [stepIndex, setStepIndex] = useState(0);
+    const joyrideHelpersRef = useRef(null);
+    const programmaticAdvanceRef = useRef(false);
+    const clickCleanupRef = useRef(null);
+    const observerRef = useRef(null);
+    const advanceTimeoutRef = useRef(null);
 
     const requestReposition = useCallback(() => {
         const instance = popperInstanceRef.current;
         if (instance && typeof instance.update === "function") {
             instance.update();
-        } else if (typeof window !== "undefined") {
-            if (typeof window.requestAnimationFrame === "function") {
-                window.requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
-            } else {
-                window.dispatchEvent(new Event("resize"));
-            }
         }
     }, []);
 
@@ -190,13 +193,82 @@ function OnboardingWidget(props) {
         []
     );
 
-    const orderedItems = useMemo(() => {
-        if (!rawItems || rawItems.length === 0) {
-            return [];
+    const advanceWithWait = useCallback((nextTarget, timeoutMs = 5000) => {
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+            observerRef.current = null;
         }
-        // Return items directly, relying on datasource order
-        return [...rawItems];
-    }, [rawItems]);
+        if (advanceTimeoutRef.current) {
+            clearTimeout(advanceTimeoutRef.current);
+        }
+
+        const doAdvance = () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+                observerRef.current = null;
+            }
+            if (advanceTimeoutRef.current) {
+                clearTimeout(advanceTimeoutRef.current);
+                advanceTimeoutRef.current = null;
+            }
+            if (joyrideHelpersRef.current) {
+                // Use helpers.next() so joyride fires its normal close-transition before advancing.
+                // STEP_AFTER will then fire and our handler will increment stepIndex once.
+                joyrideHelpersRef.current.next();
+            } else {
+                // Fallback if helpers aren't available yet (e.g. first step before getHelpers fires)
+                programmaticAdvanceRef.current = true;
+                setStepIndex(prev => prev + 1);
+            }
+        };
+
+        // Check that the element is in the DOM AND has non-zero dimensions (i.e. visible, not inside a hidden tab)
+        const isReady = selector => {
+            if (!selector) return true;
+            const el = document.querySelector(selector);
+            if (!el) return false;
+            const rect = el.getBoundingClientRect();
+            return rect.width > 0 || rect.height > 0;
+        };
+
+        if (isReady(nextTarget)) {
+            doAdvance();
+            return;
+        }
+
+        // Watch for element to appear or become visible (handles both DOM insertion and CSS reveal)
+        const observer = new MutationObserver(() => {
+            if (isReady(nextTarget)) {
+                doAdvance();
+            }
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ["class", "style", "hidden"]
+        });
+        observerRef.current = observer;
+
+        advanceTimeoutRef.current = setTimeout(() => {
+            doAdvance();
+        }, timeoutMs);
+    }, []);
+
+    const cleanupClickListener = useCallback(() => {
+        if (clickCleanupRef.current) {
+            clickCleanupRef.current();
+            clickCleanupRef.current = null;
+        }
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+            observerRef.current = null;
+        }
+        if (advanceTimeoutRef.current) {
+            clearTimeout(advanceTimeoutRef.current);
+            advanceTimeoutRef.current = null;
+        }
+    }, []);
 
     const handlePopper = useCallback(
         (popper, type) => {
@@ -214,7 +286,7 @@ function OnboardingWidget(props) {
 
     const joyrideSteps = useMemo(
         () =>
-            orderedItems
+            (rawItems ?? [])
                 .map((item, idx) => {
                     const targetSelector = formatSelector(getAttributeValue(stepTarget, item));
                     if (!targetSelector) {
@@ -227,6 +299,7 @@ function OnboardingWidget(props) {
                     }
 
                     const stepKey = item.id ?? `step-${idx}`;
+                    const clickAdvance = getAttributeValue(advanceOnClick, item) ?? false;
 
                     return {
                         target: targetSelector,
@@ -234,11 +307,22 @@ function OnboardingWidget(props) {
                         content: createContentNode(widgetContent, requestReposition, stepKey),
                         floaterProps: popperFloaterProps,
                         className: TOOLTIP_CLASS,
-                        data: { showProgress: mapProgressIndicator(props.showProgress?.value) }
+                        data: {
+                            showProgress: mapProgressIndicator(props.showProgress?.value),
+                            advanceOnClick: clickAdvance
+                        }
                     };
                 })
                 .filter(step => step !== null),
-        [orderedItems, stepTarget, stepWidget, requestReposition, popperFloaterProps, props.showProgress?.value]
+        [
+            rawItems,
+            stepTarget,
+            stepWidget,
+            advanceOnClick,
+            requestReposition,
+            popperFloaterProps,
+            props.showProgress?.value
+        ]
     );
 
     const stepsReady = joyrideSteps.length > 0;
@@ -291,8 +375,7 @@ function OnboardingWidget(props) {
     useEffect(() => {
         if (triggerValue === undefined) {
             if (stepsReady && !tourState.autoStarted) {
-                dispatch({ type: TOUR_ACTIONS.MARK_AUTO_STARTED });
-                dispatch({ type: TOUR_ACTIONS.START_TOUR });
+                dispatch({ type: TOUR_ACTIONS.START_TOUR_AUTO });
             } else if (!stepsReady) {
                 dispatch({ type: TOUR_ACTIONS.RESET_AUTO_STARTED });
             }
@@ -349,11 +432,73 @@ function OnboardingWidget(props) {
             if (!data) {
                 return;
             }
-            const { status, type, action } = data;
+            const { status, type, action, index } = data;
+
+            if (type === EVENTS.STEP_BEFORE) {
+                cleanupClickListener();
+
+                const step = joyrideSteps[index];
+                if (step?.data?.advanceOnClick) {
+                    const targetEl = document.querySelector(step.target);
+                    if (targetEl) {
+                        const nextStep = joyrideSteps[index + 1];
+                        const nextTarget = nextStep?.target ?? null;
+                        const captureHandler = e => {
+                            const rect = targetEl.getBoundingClientRect();
+                            const inBounds =
+                                e.clientX >= rect.left &&
+                                e.clientX <= rect.right &&
+                                e.clientY >= rect.top &&
+                                e.clientY <= rect.bottom;
+                            if (inBounds) {
+                                document.removeEventListener("click", captureHandler, true);
+                                clickCleanupRef.current = null;
+                                // If the overlay blocked the natural click (e.target is not inside the actual element),
+                                // programmatically fire the click so Mendix processes it (e.g. opens the tab).
+                                if (targetEl !== e.target && !targetEl.contains(e.target)) {
+                                    targetEl.click();
+                                }
+                                // Defer so Mendix can finish processing the click before we check the next target
+                                setTimeout(() => advanceWithWait(nextTarget), 0);
+                            }
+                        };
+                        document.addEventListener("click", captureHandler, true);
+                        clickCleanupRef.current = () => document.removeEventListener("click", captureHandler, true);
+                    } else {
+                        console.warn("[OW] advanceOnClick: target element not found in DOM for selector:", step.target);
+                    }
+                }
+            }
+
+            if (type === EVENTS.TOUR_START) {
+                setStepIndex(0);
+                cleanupClickListener();
+            }
+
+            if (type === EVENTS.TOUR_END) {
+                cleanupClickListener();
+            }
+
+            // In controlled mode, we must update stepIndex on every NEXT/PREV action.
+            // This covers both user button clicks and helpers.next() from doAdvance.
+            if (type === EVENTS.STEP_AFTER) {
+                if (action === ACTIONS.NEXT) {
+                    // If we already incremented stepIndex programmatically (fallback path),
+                    // consume the flag and skip to prevent double-increment / step-skipping.
+                    if (programmaticAdvanceRef.current) {
+                        programmaticAdvanceRef.current = false;
+                    } else {
+                        setStepIndex(prev => prev + 1);
+                    }
+                } else if (action === ACTIONS.PREV) {
+                    setStepIndex(prev => Math.max(0, prev - 1));
+                }
+            }
 
             const exitRequested = status === STATUS.SKIPPED || action === ACTIONS.CLOSE;
             const shouldStop = type === "tour:end" || status === STATUS.FINISHED || exitRequested;
             if (shouldStop) {
+                cleanupClickListener();
                 dispatch({ type: TOUR_ACTIONS.STOP_TOUR });
             }
             if (status === STATUS.FINISHED && action !== ACTIONS.CLOSE && !actionReportedRef.current.finish) {
@@ -365,7 +510,7 @@ function OnboardingWidget(props) {
                 tryExecuteAction(props.onTourExit);
             }
         },
-        [props.onTourExit, props.onTourFinish]
+        [props.onTourExit, props.onTourFinish, joyrideSteps, cleanupClickListener, advanceWithWait, setStepIndex]
     );
 
     // Merge styles: default joyride options < user JSON override
@@ -397,7 +542,7 @@ function OnboardingWidget(props) {
 
     const containerStyle = props.style ?? {};
 
-    const combinedClassName = classNames(WIDGET_CLASS, props.class);
+    const combinedClassName = `${WIDGET_CLASS}${props.class ? ` ${props.class}` : ""}`;
 
     const isLoading = props.runTrigger?.status === "loading" || props.steps?.status === "loading";
     if (isLoading) {
@@ -422,8 +567,12 @@ function OnboardingWidget(props) {
                         continuous
                         showSkipButton={false}
                         showBackButton={Boolean(backButtonText)}
+                        stepIndex={stepIndex}
                         spotlightClicks={false}
                         disableOverlayClose={true}
+                        getHelpers={helpers => {
+                            joyrideHelpersRef.current = helpers;
+                        }}
                         totalStepCount={totalStepCount?.value != null ? Number(totalStepCount.value) : null}
                         stepOffset={stepOffset?.value != null ? Number(stepOffset.value) : 0}
                         progressMode={(progressMode?.value ?? "local").toLowerCase()}

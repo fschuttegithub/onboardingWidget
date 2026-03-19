@@ -1,5 +1,4 @@
 import { createElement, useEffect, useRef } from "react";
-import classNames from "classnames";
 
 // SVG Icons
 const IconClose = () => (
@@ -83,6 +82,7 @@ export const CustomTooltip = ({
 }) => {
     const { content, data } = step;
     const showProgress = data?.showProgress || "dots"; // Default to dots if undefined
+    const advanceOnClick = data?.advanceOnClick ?? false;
 
     const resolvedTotal = totalStepCount != null ? totalStepCount : size;
     const resolvedOffset = stepOffset ?? 0;
@@ -129,7 +129,7 @@ export const CustomTooltip = ({
             <div className="custom-tooltip__footer">
                 {/* Back Button */}
                 <div className="custom-tooltip__footer-left">
-                    {index > 0 && (
+                    {index > 0 && !advanceOnClick && (
                         <button
                             type="button"
                             className="custom-tooltip__button custom-tooltip__button--back"
@@ -147,9 +147,9 @@ export const CustomTooltip = ({
                         Array.from({ length: displayTotal }).map((_, i) => (
                             <span
                                 key={i}
-                                className={classNames("custom-tooltip__dot", {
-                                    "custom-tooltip__dot--active": i === displayIndex
-                                })}
+                                className={`custom-tooltip__dot${
+                                    i === displayIndex ? " custom-tooltip__dot--active" : ""
+                                }`}
                                 role="img"
                                 aria-label={`Step ${i + 1} of ${displayTotal}`}
                                 aria-current={i === displayIndex ? "step" : undefined}
@@ -164,15 +164,17 @@ export const CustomTooltip = ({
 
                 {/* Next / Finish Button */}
                 <div className="custom-tooltip__footer-right">
-                    <button
-                        type="button"
-                        className="custom-tooltip__button custom-tooltip__button--primary"
-                        {...primaryProps}
-                        title={primaryTitle} // Ensure the HTML title attribute is correct
-                    >
-                        <span>{primaryTitle}</span>
-                        {isGloballyLastStep ? <IconCheck /> : <IconArrowRight />}
-                    </button>
+                    {!advanceOnClick && (
+                        <button
+                            type="button"
+                            className="custom-tooltip__button custom-tooltip__button--primary"
+                            {...primaryProps}
+                            title={primaryTitle} // Ensure the HTML title attribute is correct
+                        >
+                            <span>{primaryTitle}</span>
+                            {isGloballyLastStep ? <IconCheck /> : <IconArrowRight />}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

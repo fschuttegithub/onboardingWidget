@@ -56,25 +56,33 @@ export function getProperties(values, defaultProperties, target) {
     return defaultProperties;
 }
 
-// /**
-//  * @param {Object} values
-//  * @returns {Problem[]} returns a list of problems.
-//  */
-// export function check(values) {
-//    /** @type {Problem[]} */
-//    const errors = [];
-//    // Add errors to the above array to throw errors in Studio and Studio Pro.
-//    /* Example
-//    if (values.myProperty !== "custom") {
-//        errors.push({
-//            property: `myProperty`,
-//            message: `The value of 'myProperty' is different of 'custom'.`,
-//            url: "https://github.com/myrepo/mywidget"
-//        });
-//    }
-//    */
-//    return errors;
-// }
+/**
+ * @param {Object} values
+ * @returns {Problem[]} returns a list of problems.
+ */
+export function check(values) {
+    /** @type {Problem[]} */
+    const errors = [];
+
+    if (values.progressMode === "Global") {
+        if (!values.totalStepCount) {
+            errors.push({
+                property: "totalStepCount",
+                severity: "error",
+                message: "'Total step count' is required when Progress scope is set to 'Global'."
+            });
+        }
+        if (!values.stepOffset) {
+            errors.push({
+                property: "stepOffset",
+                severity: "error",
+                message: "'Step offset' is required when Progress scope is set to 'Global'."
+            });
+        }
+    }
+
+    return errors;
+}
 
 // /**
 //  * @param {object} values
