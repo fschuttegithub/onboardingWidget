@@ -157,7 +157,6 @@ function GuidedTour(props) {
     const {
         steps,
         stepTarget,
-        stylesJson,
         backButtonText,
         nextButtonText,
         finishButtonText,
@@ -395,27 +394,6 @@ function GuidedTour(props) {
         }
     }, [stepsReady, tourState.pendingStart, tourState.run]);
 
-    const stylesOverride = useMemo(() => {
-        if (!stylesJson || stylesJson.status !== "available") {
-            return undefined;
-        }
-        const raw = (stylesJson.value ?? "").trim();
-        if (!raw) {
-            return undefined;
-        }
-        try {
-            const parsed = JSON.parse(raw);
-            if (parsed && typeof parsed === "object") {
-                return parsed;
-            }
-            console.warn("[GuidedTour] Custom styles JSON must resolve to an object.");
-        } catch (error) {
-            console.warn("[GuidedTour] Unable to parse custom styles JSON.", error);
-        }
-
-        return undefined;
-    }, [stylesJson]);
-
     const locale = useMemo(
         () => ({
             back: backButtonText,
@@ -525,21 +503,6 @@ function GuidedTour(props) {
         []
     );
 
-    const finalStyles = useMemo(() => {
-        if (!stylesOverride) {
-            return defaultJoyrideStyles;
-        }
-        // Shallow merge sufficient for options object
-        return {
-            ...defaultJoyrideStyles,
-            ...stylesOverride,
-            options: {
-                ...defaultJoyrideStyles.options,
-                ...(stylesOverride.options || {})
-            }
-        };
-    }, [defaultJoyrideStyles, stylesOverride]);
-
     const containerStyle = props.style ?? {};
 
     const combinedClassName = `${WIDGET_CLASS}${props.class ? ` ${props.class}` : ""}`;
@@ -562,7 +525,7 @@ function GuidedTour(props) {
                         steps={joyrideSteps}
                         showProgress={false} // CustomTooltip handles all progress display
                         callback={handleJoyride}
-                        styles={finalStyles}
+                        styles={defaultJoyrideStyles}
                         locale={locale}
                         continuous
                         showSkipButton={false}

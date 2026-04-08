@@ -99,12 +99,6 @@
                     <description>Label for the Finish button.</description>
                 </property>
             </propertyGroup>
-            <propertyGroup caption="Advanced">
-                <property key="stylesJson" type="textTemplate" required="false">
-                    <caption>Custom styles (JSON)</caption>
-                    <description>Optional JSON object to override react-joyride styles (see react-joyride docs → Styling).</description>
-                </property>
-            </propertyGroup>
         </propertyGroup>
     </properties>
 </widget>
