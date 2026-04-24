@@ -338,17 +338,6 @@ function GuidedTour(props) {
 
     const actionReportedRef = useRef({ finish: false, exit: false });
 
-    useEffect(() => {
-        if (!tourState.run) return;
-        if (typeof document !== "undefined" && joyrideSteps.length > 0) {
-            joyrideSteps.forEach(step => {
-                if (step.target && !document.querySelector(step.target)) {
-                    console.warn(`[GuidedTour] Target not found: "${step.target}"`);
-                }
-            });
-        }
-    }, [joyrideSteps, tourState.run]);
-
     // Handle trigger-based tour start/stop
     useEffect(() => {
         if (triggerValue === undefined) {
@@ -416,6 +405,9 @@ function GuidedTour(props) {
                 cleanupClickListener();
 
                 const step = joyrideSteps[index];
+                if (step?.target && !document.querySelector(step.target)) {
+                    console.warn(`[GuidedTour] Target not found for step ${index}: "${step.target}"`);
+                }
                 if (step?.data?.advanceOnClick) {
                     const targetEl = document.querySelector(step.target);
                     if (targetEl) {
